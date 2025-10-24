@@ -18,71 +18,126 @@ struct CamListView: View {
     
     var body: some View {
         NavigationView {
-            ZStack {
-                Color(.systemGroupedBackground)
-                    .ignoresSafeArea()
+            ZStack(alignment: .top) {
+                GeometryReader { geo in
+                    Color.charcoal
+                        .frame(height: geo.safeAreaInsets.top)
+                        .ignoresSafeArea(edges: .top)
+                }
                 
                 VStack(spacing: 0) {
+                    // ----------------- Profile -----------------
+                    HStack(spacing: 16) {
+                        Image("")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 45, height: 45)
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.white, lineWidth: 1))
+                        
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Rock the shift, ")
+                                .font(.system(size: 16, weight: .regular))
+                            + Text("Bogdan")
+                                .font(.system(size: 16, weight: .bold))
+                            + Text("!")
+                            
+                            Text("Cashier")
+                                .font(.system(size: 12, weight: .regular))
+                                .padding(.vertical, 4)
+                                .padding(.horizontal, 6)
+                                .background(Color.blue.opacity(0.5))
+                                .cornerRadius(4)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .stroke(Color.blue, lineWidth: 1)
+                                )
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: "line.3.horizontal.decrease")
+                            .font(.title2)
+                        
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 12)
+                    .background(Color.charcoal)
+                    .foregroundColor(.white)
+                    
+                    // ----------------- Location -----------------
+                    LocationCard()
+                    
+                    // ----------------- Camera List -----------------
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 16) {
-                            // Camera Cards
                             ForEach(viewModel.cameras) { camera in
                                 NavigationLink(destination: CamVideoView(camera: camera)) {
-                                    ZStack(alignment: .bottom) {
+                                    ZStack(alignment: .bottomLeading) {
                                         RoundedRectangle(cornerRadius: 20)
                                             .fill(Color.gray.opacity(0.3))
                                             .aspectRatio(1, contentMode: .fit)
                                         
-                                        Image(systemName: "video.fill")
-                                            .font(.system(size: 40))
-                                            .foregroundColor(.gray.opacity(0.5))
-                                        
-                                        Text(camera.name)
-                                            .font(.system(size: 14, weight: .semibold))
-                                            .foregroundColor(.white)
-                                            .lineLimit(1)
-                                            .padding(.horizontal, 12)
-                                            .padding(.vertical, 8)
-                                            .frame(maxWidth: .infinity)
-                                            .background(Color.black.opacity(0.7))
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(camera.name)
+                                                .font(.system(size: 16, weight: .regular))
+                                                .foregroundColor(.white)
+                                                .lineLimit(1)
+                                            
+                                            Text(camera.aisleLoc)
+                                                .font(.system(size: 16, weight: .bold))
+                                                .foregroundColor(.white)
+                                                .lineLimit(1)
+                                        }
+                                        .padding(.leading, 16)
+                                        .padding(.bottom, 16)
                                     }
-                                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                                    .clipShape(RoundedRectangle(cornerRadius: 10))
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
                         }
-                        .padding(16)
-                        .padding(.bottom, 100) // Space for bottom button
+                        .padding(.horizontal, 16)
+                        .padding(.top, 16)
+                        .padding(.bottom, 8)
+                        
+                        Button(action: {
+                            isAddingCamera = true
+                        }, label: {
+                            HStack(spacing: 12) {
+                                Image(systemName: "plus")
+                                    .font(.system(size: 16, weight: .semibold))
+                                Text("Add CCTV")
+                                    .font(.system(size: 16, weight: .semibold))
+                            }
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color.charcoal)
+                            .cornerRadius(10)
+                        })
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+                        .padding(.bottom, 80)
                     }
-                    
-                    Spacer()
-                    
-                    // Add CCTV Button at bottom
-                    Button(action: {
-                        isAddingCamera = true
-                    }, label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 20, weight: .semibold))
-                            Text("Add CCTV")
-                                .font(.system(size: 18, weight: .semibold))
-                        }
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 18)
-                        .background(Color.blue)
-                        .cornerRadius(16)
-                    })
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 16)
-                    .background(Color(.systemGroupedBackground))
+                    .refreshable {
+                        await refreshCameras()
+                    }
+                }
+                .background(.gray.opacity(0.2))
+                .sheet(isPresented: $isAddingCamera) {
+                    AddCamView()
                 }
             }
-            .navigationTitle("CCTV List")
-            .sheet(isPresented: $isAddingCamera) {
-                AddCamView()
-            }
         }
+        .tint(.white)
+    }
+    
+    // Refresh List
+    private func refreshCameras() async {
+        viewModel.fetchCameras()
+        try? await Task.sleep(nanoseconds: 500_000_000)
     }
 }
 

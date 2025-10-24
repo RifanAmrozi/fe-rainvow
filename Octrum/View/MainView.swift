@@ -10,6 +10,10 @@ import SwiftUI
 struct MainView: View {
     @StateObject private var viewModel = CameraViewModel()
     
+    init() {
+        UITabBar.appearance().backgroundColor = UIColor.white
+    }
+    
     var body: some View {
         TabView {
             CamListView()
