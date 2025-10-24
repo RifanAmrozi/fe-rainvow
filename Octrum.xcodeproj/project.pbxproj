@@ -28,9 +28,22 @@
 		56B0EA6B2EA22CCF00DE40E7 /* .gitattributes */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = .gitattributes; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		564F7BA32EA9F28E004A5BCB /* Exceptions for "Octrum" folder in "Octrum" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 56B0E8AF2EA22B8500DE40E7 /* Octrum */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		56B0E8B22EA22B8500DE40E7 /* Octrum */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				564F7BA32EA9F28E004A5BCB /* Exceptions for "Octrum" folder in "Octrum" target */,
+			);
 			path = Octrum;
 			sourceTree = "<group>";
 		};
@@ -376,6 +389,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Octrum/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -410,6 +424,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Octrum/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
