@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		565499922EA2334000B68E86 /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 565499912EA2334000B68E86 /* WebRTC */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		56B0E8BE2EA22B8600DE40E7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,9 +28,22 @@
 		56B0EA6B2EA22CCF00DE40E7 /* .gitattributes */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = .gitattributes; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		564F7BA32EA9F28E004A5BCB /* Exceptions for "Octrum" folder in "Octrum" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 56B0E8AF2EA22B8500DE40E7 /* Octrum */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		56B0E8B22EA22B8500DE40E7 /* Octrum */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				564F7BA32EA9F28E004A5BCB /* Exceptions for "Octrum" folder in "Octrum" target */,
+			);
 			path = Octrum;
 			sourceTree = "<group>";
 		};
@@ -47,6 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				565499922EA2334000B68E86 /* WebRTC in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,6 +121,7 @@
 			);
 			name = Octrum;
 			packageProductDependencies = (
+				565499912EA2334000B68E86 /* WebRTC */,
 			);
 			productName = Octrum;
 			productReference = 56B0E8B02EA22B8500DE40E7 /* Octrum.app */;
@@ -159,6 +178,9 @@
 			);
 			mainGroup = 56B0E8A72EA22B8500DE40E7;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				565499902EA2334000B68E86 /* XCRemoteSwiftPackageReference "WebRTC" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 56B0E8B12EA22B8500DE40E7 /* Products */;
 			projectDirPath = "";
@@ -367,6 +389,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Octrum/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -401,6 +424,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Octrum/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -499,6 +523,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		565499902EA2334000B68E86 /* XCRemoteSwiftPackageReference "WebRTC" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stasel/WebRTC.git";
+			requirement = {
+				kind = exactVersion;
+				version = 140.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		565499912EA2334000B68E86 /* WebRTC */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 565499902EA2334000B68E86 /* XCRemoteSwiftPackageReference "WebRTC" */;
+			productName = WebRTC;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 56B0E8A82EA22B8500DE40E7 /* Project object */;
 }

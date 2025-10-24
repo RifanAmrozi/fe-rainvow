@@ -1,7 +1,6 @@
 disabled_rules:
   - trailing_whitespace        # Disable warning/error for trailing spaces at line ends
   - explicit_acl               # Disable enforcement of explicit access control declarations
-  - identifier_name            # Disable enforcement of identifier name rules
 
 opt_in_rules:
   - nesting                   # Warn on deeply nested code blocks to improve readability
@@ -23,7 +22,7 @@ excluded:
   - .build
 
 identifier_name:
-  min_length: 3               # Enforce minimum length of 3 characters for variable/constant names
+  min_length: 2               # Enforce minimum length of 2 characters for variable/constant names
   validates_start_with_lowercase:
     severity: warning         # Warn if identifier does not start with a lowercase letter
 
