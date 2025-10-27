@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct LocationCard: View {
+    let store: Store?
+    
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Indomaret @ Skyhouse Apartment BSD")
+                Text(store?.storeName ?? "")
                     .font(.system(size: 14, weight: .medium))
-                Text("Store address")
+                Text(store?.storeAddress ?? "")
                     .font(.system(size: 12, weight: .regular))
                     .foregroundColor(.gray)
             }

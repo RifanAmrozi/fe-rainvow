@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CamListView: View {
     @EnvironmentObject var viewModel: CameraViewModel
+    @StateObject private var userViewModel = UserViewModel()
     @State private var isAddingCamera = false
     
     let columns = [
@@ -38,11 +39,11 @@ struct CamListView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Rock the shift, ")
                                 .font(.system(size: 16, weight: .regular))
-                            + Text("Bogdan")
+                            + Text(userViewModel.userProfile?.username.capitalized ?? "Loading...")
                                 .font(.system(size: 16, weight: .bold))
                             + Text("!")
                             
-                            Text("Cashier")
+                            Text(userViewModel.userProfile?.role.capitalized ?? "Loading...")
                                 .font(.system(size: 12, weight: .regular))
                                 .padding(.vertical, 4)
                                 .padding(.horizontal, 6)
@@ -66,8 +67,8 @@ struct CamListView: View {
                     .background(Color.charcoal)
                     .foregroundColor(.white)
                     
-                    // ----------------- Location -----------------
-                    LocationCard()
+            // ----------------- Location -----------------
+            LocationCard(store: userViewModel.store)
                     
                     // ----------------- Camera List -----------------
                     ScrollView {

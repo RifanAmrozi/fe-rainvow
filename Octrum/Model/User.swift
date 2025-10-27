@@ -25,3 +25,17 @@ struct LoginRequest: Codable {
     let username: String
     let password: String
 }
+
+struct UserProfile: Codable {
+    let id: String
+    let username: String
+    let role: String
+    let storeId: String
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case username
+        case role
+        case storeId = "store_id"
+    }
+}

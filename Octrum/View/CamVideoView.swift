@@ -11,6 +11,7 @@ import WebRTC
 struct CamVideoView: View {
     let camera: Camera
     @StateObject private var webRTCManager = WebRTCManager()
+    @StateObject private var userViewModel = UserViewModel()
     
     init(camera: Camera) {
         self.camera = camera
@@ -29,7 +30,7 @@ struct CamVideoView: View {
     var body: some View {
         VStack(spacing: 0) {
             // ----------------- Location -----------------
-            LocationCard()
+            LocationCard(store: userViewModel.store)
             
             // ----------------- Live Streaming -----------------
             ZStack {
