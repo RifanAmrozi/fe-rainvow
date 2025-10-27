@@ -12,11 +12,15 @@ public class CameraService {
     static let shared = CameraService()
     
     private let baseURL = "http://10.60.61.85:3000"
-    private let storeId = "d4c77b10-1a0f-4c21-9a7b-8bcb1c2a5678"
+    private var session: SessionManager { SessionManager.shared }
     
     private init() {}
     
     func fetchCameras() -> AnyPublisher<[Camera], Error> {
+        guard let storeId = session.storeId else {
+            return Fail(error: URLError(.userAuthenticationRequired)).eraseToAnyPublisher()
+        }
+        
         guard let url = URL(string: "\(baseURL)/camera?store_id=\(storeId)")
         else {
             return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
@@ -78,6 +82,10 @@ public class CameraService {
     func createCamera(name: String, aisleLoc: String, rtspUrl: String) -> AnyPublisher<Camera, Error> {
         guard let url = URL(string: "\(baseURL)/camera") else {
             return Fail(error: URLError(.badURL)).eraseToAnyPublisher()
+        }
+        
+        guard let storeId = session.storeId else {
+            return Fail(error: URLError(.userAuthenticationRequired)).eraseToAnyPublisher()
         }
         
         let request = CreateCameraRequest(

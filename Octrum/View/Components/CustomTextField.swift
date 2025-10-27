@@ -12,6 +12,7 @@ struct CustomTextField: View {
     let placeholder: String
     @Binding var text: String
     var isDisabled: Bool = false
+    var isSecure: Bool = false
     var autocapitalization: TextInputAutocapitalization = .sentences
     
     var body: some View {
@@ -21,16 +22,28 @@ struct CustomTextField: View {
             
             Spacer().frame(height: 4)
             
-            TextField(placeholder, text: $text)
-                .padding(8)
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                )
-                .textInputAutocapitalization(autocapitalization)
-                .disabled(isDisabled)
+            if isSecure {
+                SecureField(placeholder, text: $text)
+                    .padding(8)
+                    .background(Color.gray.opacity(0.1))
+                    .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                    )
+                    .disabled(isDisabled)
+            } else {
+                TextField(placeholder, text: $text)
+                    .padding(8)
+                    .background(Color.gray.opacity(0.1))
+                    .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+                    )
+                    .textInputAutocapitalization(autocapitalization)
+                    .disabled(isDisabled)
+            }
         }
     }
 }

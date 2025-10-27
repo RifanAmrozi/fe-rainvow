@@ -9,9 +9,17 @@ import SwiftUI
 
 @main
 struct OctrumApp: App {
+    @StateObject private var session = SessionManager.shared
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if session.isLoggedIn {
+                MainView()
+                    .environmentObject(session)
+            } else {
+                LoginView()
+                    .environmentObject(session)
+            }
         }
     }
 }
