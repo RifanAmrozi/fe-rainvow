@@ -10,6 +10,7 @@ public class WebRTCManager: ObservableObject {
     private var peerConnection: RTCPeerConnection?
     private var webRTCDelegate: WebRTCDelegate?
     private let factory = RTCPeerConnectionFactory()
+    private var videoTrackTimer: Timer?
     
     // Set timeout
     private lazy var urlSession: URLSession = {
@@ -40,10 +41,25 @@ public class WebRTCManager: ObservableObject {
         self.webRTCDelegate = WebRTCDelegate()
         self.webRTCDelegate?.onTrack = { track in
             DispatchQueue.main.async {
-                print("WHEP: Video track received.")
+                print("WHEP: Video track received - enabled: \(track.isEnabled)")
+                // Force enable the track
+                track.isEnabled = true
+                
+                // Remove previous track if exists
+                if let oldTrack = self.remoteVideoTrack {
+                    print("WHEP: Removing old video track")
+                    oldTrack.isEnabled = false
+                }
+                
                 self.remoteVideoTrack = track
                 self.isConnected = true
                 self.isConnecting = false
+                
+                // Additional debug info
+                print("WHEP: Video track set successfully - readyState: \(track.readyState.rawValue)")
+                
+                // Start validation to prevent black screen
+                self.startVideoTrackValidation()
             }
         }
         self.webRTCDelegate?.onConnectionStateChange = { state in
@@ -156,12 +172,95 @@ public class WebRTCManager: ObservableObject {
     func disconnect() {
         guard isConnected || isConnecting else { return }
         print("WHEP: Disconnecting...")
+        
+        // Stop video track validation timer
+        videoTrackTimer?.invalidate()
+        videoTrackTimer = nil
+        
+        // Properly disable video track before removing
+        if let track = remoteVideoTrack {
+            track.isEnabled = false
+        }
+        
         peerConnection?.close()
         peerConnection = nil
         DispatchQueue.main.async {
             self.remoteVideoTrack = nil
             self.isConnected = false
             self.isConnecting = false
+        }
+    }
+    
+    private func startVideoTrackValidation() {
+        // Invalidate any existing timer
+        videoTrackTimer?.invalidate()
+        
+        // Start a timer to check video track after 3 seconds
+        videoTrackTimer = Timer.scheduledTimer(withTimeInterval: 3.0, repeats: false) { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.validateVideoTrack()
+            }
+        }
+    }
+    
+    private func validateVideoTrack() {
+        guard let track = remoteVideoTrack else {
+            print("❌ WHEP: No video track to validate")
+            return
+        }
+        
+        print("🔍 WHEP: Validating video track - enabled: \(track.isEnabled), readyState: \(track.readyState.rawValue)")
+        
+        // If track is not enabled, try to re-enable it
+        if !track.isEnabled {
+            print("🔄 WHEP: Re-enabling video track")
+            track.isEnabled = true
+        }
+        
+        // Force track refresh by toggling enabled state - more aggressive approach
+        if track.readyState == .live {
+            print("🔄 WHEP: Aggressive refresh for black screen prevention")
+            
+            // First refresh
+            track.isEnabled = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                track.isEnabled = true
+                
+                // Second refresh after 1 second if still having issues
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    if track.readyState == .live && track.isEnabled {
+                        print("🔄 WHEP: Secondary validation refresh")
+                        track.isEnabled = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            track.isEnabled = true
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // Public function to manually refresh video track from UI
+    func refreshVideoTrack() {
+        guard let track = remoteVideoTrack else {
+            print("❌ WHEP: No video track to refresh")
+            return
+        }
+        
+        print("🔄 WHEP: Manual video track refresh requested")
+        
+        // Most aggressive refresh approach
+        track.isEnabled = false
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            track.isEnabled = true
+            print("✅ WHEP: Manual refresh completed")
+            
+            // Force UI update by triggering published property
+            DispatchQueue.main.async {
+                self.remoteVideoTrack = nil
+                self.remoteVideoTrack = track
+            }
         }
     }
 }
