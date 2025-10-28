@@ -3,46 +3,70 @@ import SwiftUI
 struct LoginView: View {
     @StateObject private var viewModel = AuthViewModel()
     @EnvironmentObject var session: SessionManager
+    @State private var isTermsAccepted = false
     
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Octrum")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
+        VStack {
+            Color.charcoal
+                .frame(height: 150)
+                .padding(.bottom, 10)
+                .ignoresSafeArea(edges: .top)
             
-            CustomTextField(label: "Username", placeholder: "Enter username", text: $viewModel.username)
-            CustomTextField(label: "Password", placeholder: "Enter password", text: $viewModel.password, isSecure: true)
-            
-            if let errorMessage = viewModel.errorMessage {
-                Text(errorMessage)
-                    .foregroundColor(.red)
-                    .font(.caption)
-            }
-            
-            Button(action: {
-                viewModel.login()
-            }, label: {
-                HStack {
-                    if viewModel.isLoading {
-                        ProgressView()
-                            .tint(.white)
-                    } else {
-                        Text("Login")
-                    }
+            VStack(spacing: 20) {
+                Text("Login")
+                    .font(.largeTitle)
+                    .fontWeight(.medium)
+                    .foregroundColor(.charcoal)
+                
+                CustomTextField(label: "Username", placeholder: "Enter username", text: $viewModel.username)
+                CustomTextField(label: "Password", placeholder: "Enter password", text: $viewModel.password, isSecure: true)
+                
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)
                 }
-                .frame(maxWidth: .infinity)
-                .padding()
-                .background(Color.accentColor)
-                .foregroundColor(.white)
-                .cornerRadius(10)
-            })
-            .disabled(viewModel.isLoading)
+                
+                HStack(spacing: 8) {
+                    Button(action: {
+                        isTermsAccepted.toggle()
+                    }, label: {
+                        Image(systemName: isTermsAccepted ? "record.circle" : "circle")
+                            .foregroundColor(.blue)
+                            .font(.system(size: 18))
+                    })
+                    
+                    Text("I agree to all the terms and privacy policy.")
+                        .font(.footnote)
+                        .multilineTextAlignment(.leading)
+                    
+                    Spacer()
+                }
+                
+                Button(action: {
+                    viewModel.login()
+                }, label: {
+                    HStack {
+                        if viewModel.isLoading {
+                            ProgressView()
+                                .tint(.white)
+                        } else {
+                            Text("Login")
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(isTermsAccepted ? Color.charcoal : Color.gray)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                })
+                .disabled(viewModel.isLoading || !isTermsAccepted)
+            }
+            .padding()
             
             Spacer()
         }
-        .padding()
-        .background(Color.charcoal.ignoresSafeArea())
+        .background(.gray.opacity(0.2))
     }
 }
 
