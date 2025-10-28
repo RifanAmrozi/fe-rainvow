@@ -39,11 +39,11 @@ struct CamListView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Rock the shift, ")
                                 .font(.system(size: 16, weight: .regular))
-                            + Text(userViewModel.userProfile?.username.capitalized ?? "Loading...")
+                            + Text(userViewModel.userProfile?.username.capitalized ?? "  ")
                                 .font(.system(size: 16, weight: .bold))
                             + Text("!")
                             
-                            Text(userViewModel.userProfile?.role.capitalized ?? "Loading...")
+                            Text(userViewModel.userProfile?.role.capitalized ?? "  ")
                                 .font(.system(size: 12, weight: .regular))
                                 .padding(.vertical, 4)
                                 .padding(.horizontal, 6)
@@ -91,7 +91,7 @@ struct CamListView: View {
                                                 .foregroundColor(.white)
                                                 .lineLimit(1)
                                         }
-                                        .padding(.leading, 16)
+                                        .padding(.horizontal, 16)
                                         .padding(.bottom, 16)
                                     }
                                     .clipShape(RoundedRectangle(cornerRadius: 10))

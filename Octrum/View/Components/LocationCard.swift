@@ -15,9 +15,11 @@ struct LocationCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(store?.storeName ?? "")
                     .font(.system(size: 14, weight: .medium))
+                    .lineLimit(1)
                 Text(store?.storeAddress ?? "")
                     .font(.system(size: 12, weight: .regular))
                     .foregroundColor(.gray)
+                    .lineLimit(1)
             }
             
             Spacer()
@@ -25,8 +27,8 @@ struct LocationCard: View {
             Image(systemName: "chevron.right.circle")
                 .foregroundColor(Color.blue)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
         .background(Color.white)
         .cornerRadius(10)
         .overlay(
