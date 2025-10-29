@@ -46,6 +46,35 @@ class UserViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
+    func getUserProfile() {
+        guard let userId = sessionManager.userId else {
+            errorMessage = "User ID not found"
+            return
+        }
+        
+        isLoading = true
+        errorMessage = nil
+        
+        authService.getUserProfile(userId: userId)
+            .sink { [weak self] completion in
+                DispatchQueue.main.async {
+                    self?.isLoading = false
+                }
+                if case .failure(let error) = completion {
+                    DispatchQueue.main.async {
+                        self?.errorMessage = "Failed to load profile: \(error.localizedDescription)"
+                        print("User profile error: \(error)")
+                    }
+                }
+            } receiveValue: { [weak self] profile in
+                DispatchQueue.main.async {
+                    self?.userProfile = profile
+                    print("User profile loaded: \(profile.username) - \(profile.role)")
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
     func fetchStore() {
         guard let storeId = sessionManager.storeId else {
             errorMessage = "Store ID not found"

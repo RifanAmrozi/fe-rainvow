@@ -16,41 +16,30 @@ struct MainView: View {
     }
     
     var body: some View {
-        TabView {
-            CamListView()
-                .tabItem {
-                    Image(systemName: "video.fill")
-                    Text("CCTV")
-                }
-                .environmentObject(viewModel)
-            
-            Text("Alerts")
-                .tabItem {
-                    Image(systemName: "bell.fill")
-                    Text("Alerts")
-                }
-            
-            Text("History")
-                .tabItem {
-                    Image(systemName: "clock.fill")
-                    Text("History")
-                }
-            
-            VStack {
-                Text("Profile")
-                Button("Logout") {
-                    session.clearSession()
-                }
-                .padding()
-                .background(Color.red)
-                .foregroundColor(.white)
-                .cornerRadius(10)
+        NavigationStack {
+            TabView {
+                CamListView()
+                    .tabItem {
+                        Image(systemName: "video.fill")
+                        Text("CCTV")
+                    }
+                    .environmentObject(viewModel)
+                
+                Text("Alerts")
+                    .tabItem {
+                        Image(systemName: "bell.fill")
+                        Text("Alerts")
+                    }
+                
+                Text("History")
+                    .tabItem {
+                        Image(systemName: "clock.fill")
+                        Text("History")
+                    }
             }
-            .tabItem {
-                Image(systemName: "person.fill")
-                Text("Profile")
-            }
+            .tint(.blue)
         }
+        .tint(.white)
     }
 }
 
