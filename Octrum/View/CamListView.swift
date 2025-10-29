@@ -35,36 +35,48 @@ struct CamListView: View {
                     
                     // ----------------- Camera List -----------------
                     ScrollView {
-                        LazyVGrid(columns: columns, spacing: 16) {
-                            ForEach(viewModel.cameras) { camera in
-                                NavigationLink(destination: CamVideoView(camera: camera)) {
-                                    ZStack(alignment: .bottomLeading) {
-                                        RoundedRectangle(cornerRadius: 20)
-                                            .fill(Color.gray.opacity(0.3))
-                                            .aspectRatio(1, contentMode: .fit)
-                                        
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(camera.name)
-                                                .font(.system(size: 16, weight: .regular))
-                                                .foregroundColor(.white)
-                                                .lineLimit(1)
+                        if (viewModel.cameras.isEmpty) {
+                            DisclaimerCard(
+                                title: "The CCTV list might not be available due to:",
+                                message: """
+                                    • Different WiFi network with the CCTV
+                                    • Bad internet connection
+                                    """
+                            )
+                            .padding()
+                            
+                        } else {
+                            LazyVGrid(columns: columns, spacing: 16) {
+                                ForEach(viewModel.cameras) { camera in
+                                    NavigationLink(destination: CamVideoView(camera: camera)) {
+                                        ZStack(alignment: .bottomLeading) {
+                                            RoundedRectangle(cornerRadius: 20)
+                                                .fill(Color.gray.opacity(0.3))
+                                                .aspectRatio(1, contentMode: .fit)
                                             
-                                            Text(camera.aisleLoc)
-                                                .font(.system(size: 16, weight: .bold))
-                                                .foregroundColor(.white)
-                                                .lineLimit(1)
+                                            VStack(alignment: .leading, spacing: 4) {
+                                                Text(camera.name)
+                                                    .font(.system(size: 16, weight: .regular))
+                                                    .foregroundColor(.white)
+                                                    .lineLimit(1)
+                                                
+                                                Text(camera.aisleLoc)
+                                                    .font(.system(size: 16, weight: .bold))
+                                                    .foregroundColor(.white)
+                                                    .lineLimit(1)
+                                            }
+                                            .padding(.horizontal, 16)
+                                            .padding(.bottom, 16)
                                         }
-                                        .padding(.horizontal, 16)
-                                        .padding(.bottom, 16)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
                                     }
-                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    .buttonStyle(PlainButtonStyle())
                                 }
-                                .buttonStyle(PlainButtonStyle())
                             }
+                            .padding(.horizontal, 16)
+                            .padding(.top, 16)
+                            .padding(.bottom, 8)
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 16)
-                        .padding(.bottom, 8)
                         
                         Button(action: {
                             isAddingCamera = true
@@ -98,6 +110,7 @@ struct CamListView: View {
         .tint(.white)
     }
     
+    // Profile
     private var profileHeaderView: some View {
         HStack(spacing: 16) {
             NavigationLink(destination: ProfileView()) {
@@ -112,11 +125,11 @@ struct CamListView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Rock the shift, ")
                     .font(.system(size: 16, weight: .regular))
-                + Text(userViewModel.userProfile?.username.capitalized ?? "  ")
+                + Text(userViewModel.userProfile?.username.capitalized ?? "Octrooms")
                     .font(.system(size: 16, weight: .bold))
                 + Text("!")
                 
-                Text(userViewModel.userProfile?.role.capitalized ?? "  ")
+                Text(userViewModel.userProfile?.role.capitalized ?? "      ")
                     .font(.system(size: 12, weight: .regular))
                     .padding(.vertical, 4)
                     .padding(.horizontal, 6)
