@@ -12,6 +12,7 @@ struct CamVideoView: View {
     let camera: Camera
     @StateObject private var webRTCManager = WebRTCManager()
     @StateObject private var userViewModel = UserViewModel()
+    @State private var isFullscreen = false
     
     init(camera: Camera) {
         self.camera = camera
@@ -101,6 +102,24 @@ struct CamVideoView: View {
                     .padding()
                     
                     Spacer()
+                    
+                    HStack {
+                        Spacer()
+                        
+                        if webRTCManager.isConnected {
+                            Button(action: {
+                                isFullscreen = true
+                            }, label: {
+                                Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(Color.black.opacity(0.6))
+                                    .clipShape(Circle())
+                            })
+                        }
+                    }
+                    .padding()
                 }
             }
             .background(.black)
@@ -125,6 +144,13 @@ struct CamVideoView: View {
         .onTapGesture(count: 2) {
             // Double tap to refresh video if black screen
             refreshVideoTrack()
+        }
+        .fullScreenCover(isPresented: $isFullscreen) {
+            FullScreenVideoView(
+                webRTCManager: webRTCManager,
+                camera: camera,
+                isPresented: $isFullscreen
+            )
         }
     }
     
