@@ -70,14 +70,14 @@ struct FullScreenVideoView: View {
                         // Close Button
                         Button(action: {
                             isPresented = false
-                        }) {
+                        }, label: {
                             Image(systemName: "xmark")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.white)
                                 .padding(12)
                                 .background(Color.black.opacity(0.6))
                                 .clipShape(Circle())
-                        }
+                        })
                         
                         Spacer()
                         
@@ -103,14 +103,14 @@ struct FullScreenVideoView: View {
                             if webRTCManager.isConnected {
                                 Button(action: {
                                     refreshVideoTrack()
-                                }) {
+                                }, label: {
                                     Image(systemName: "arrow.clockwise")
                                         .font(.system(size: 18, weight: .semibold))
                                         .foregroundColor(.white)
                                         .padding(12)
                                         .background(Color.black.opacity(0.6))
                                         .clipShape(Circle())
-                                }
+                                })
                             }
                         }
                     }
@@ -134,14 +134,14 @@ struct FullScreenVideoView: View {
                         // Minimize/Exit Fullscreen Button
                         Button(action: {
                             isPresented = false
-                        }) {
+                        }, label: {
                             Image(systemName: "arrow.down.right.and.arrow.up.left")
                                 .font(.system(size: 18, weight: .semibold))
                                 .foregroundColor(.white)
                                 .padding(12)
                                 .background(Color.black.opacity(0.6))
                                 .clipShape(Circle())
-                        }
+                        })
                     }
                     .padding()
                     .background(
@@ -208,5 +208,4 @@ struct FullScreenVideoView: View {
             storeId: "store-id"
         ),
         isPresented: .constant(true)
-    )
-}
+    )}
