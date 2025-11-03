@@ -30,7 +30,7 @@ struct ProfileView: View {
     
     var body: some View {
         ZStack {
-            Color.gray.opacity(0.2).ignoresSafeArea()
+            themeBackground().ignoresSafeArea()
             
             VStack {
                 HStack {}

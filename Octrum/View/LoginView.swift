@@ -66,7 +66,7 @@ struct LoginView: View {
             
             Spacer()
         }
-        .background(.gray.opacity(0.2))
+        .background(themeBackground())
     }
 }
 

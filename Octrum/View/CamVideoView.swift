@@ -128,9 +128,35 @@ struct CamVideoView: View {
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .padding(16)
             
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Camera & Location")
+                    .font(.system(size: 14, weight: .bold))
+                
+                Text("\(camera.name) - \(camera.aisleLoc)")
+                    .font(.system(size: 14, weight: .regular))
+                
+                Divider()
+                    .background(.gray.opacity(0.4))
+                    .padding(.vertical, 4)
+                
+                Text("RTSP URL")
+                    .font(.system(size: 14, weight: .bold))
+                
+                Text("\(camera.rtspUrl)")
+                    .font(.system(size: 14, weight: .regular))
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(.white)
+            .cornerRadius(10)
+            .overlay(RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.gray.opacity(0.3), lineWidth: 1))
+            .padding()
+            
             Spacer()
+            
         }
-        .background(.gray.opacity(0.2))
+        .background(themeBackground())
         .navigationTitle("Live")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
@@ -170,20 +196,15 @@ struct WebRTCVideoView: UIViewRepresentable {
         view.videoContentMode = .scaleAspectFit
         view.backgroundColor = UIColor.black
         
-        // Remove from any previous view first
         videoTrack.remove(view)
-        
-        // Ensure the video track is enabled before adding
         videoTrack.isEnabled = true
         
         print("🖥️ Creating new video view - track enabled: \(videoTrack.isEnabled), readyState: \(videoTrack.readyState.rawValue)")
         videoTrack.add(view)
         
-        // Force immediate layout and rendering
         view.setNeedsLayout()
         view.layoutIfNeeded()
         
-        // Additional frame setup
         DispatchQueue.main.async {
             view.setNeedsDisplay()
             view.layer.setNeedsDisplay()
@@ -193,17 +214,14 @@ struct WebRTCVideoView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: RTCMTLVideoView, context: Context) {
-        // More aggressive track management
         if !videoTrack.isEnabled {
             print("🔄 Re-enabling video track in updateUIView")
             videoTrack.isEnabled = true
         }
         
-        // Re-add track if needed (this can help with rendering issues)
         videoTrack.remove(uiView)
         videoTrack.add(uiView)
         
-        // Force complete view refresh
         uiView.setNeedsLayout()
         uiView.layoutIfNeeded()
         uiView.setNeedsDisplay()

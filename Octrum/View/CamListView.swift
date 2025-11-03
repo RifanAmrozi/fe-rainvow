@@ -101,7 +101,7 @@ struct CamListView: View {
                         await refreshCameras()
                     }
                 }
-                .background(.gray.opacity(0.2))
+                .background(themeBackground())
                 .sheet(isPresented: $isAddingCamera) {
                     AddCamView()
                 }
