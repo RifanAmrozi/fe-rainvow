@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MainView: View {
-    @StateObject private var viewModel = CameraViewModel()
+    @StateObject private var camViewModel = CameraViewModel()
     @EnvironmentObject var session: SessionManager
     
     init() {
@@ -23,15 +23,15 @@ struct MainView: View {
                         Image(systemName: "video.fill")
                         Text("CCTV")
                     }
-                    .environmentObject(viewModel)
+                    .environmentObject(camViewModel)
                 
-                Text("Alerts")
+                AlertListView()
                     .tabItem {
                         Image(systemName: "bell.fill")
                         Text("Alerts")
                     }
                 
-                Text("History")
+                AlertHistoryView()
                     .tabItem {
                         Image(systemName: "clock.fill")
                         Text("History")
