@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct AlertListView: View {
-    @StateObject private var userViewModel = UserViewModel()
-    @StateObject private var alertViewModel = AlertViewModel()
+    @ObservedObject private var userViewModel = UserViewModel.shared
+    @ObservedObject private var alertViewModel = AlertViewModel.shared
+    @EnvironmentObject var webSocketManager: WebSocketManager
     
     var body: some View {
         VStack(spacing: 0) {
@@ -31,7 +32,7 @@ struct AlertListView: View {
                 Spacer()
                 ProgressView()
                     .scaleEffect(1.5)
-                    .tint(.white)
+                    .tint(.black)
                 Spacer()
             } else if let errorMessage = alertViewModel.errorMessage {
                 Spacer()
@@ -77,7 +78,14 @@ struct AlertListView: View {
         }
         .background(themeBackground())
         .onAppear {
-            alertViewModel.fetchAlerts()
+            userViewModel.fetchDataOnce()
+            alertViewModel.fetchAlertsOnce()
+        }
+        .onChange(of: webSocketManager.newAlertReceived) { newValue in
+            if newValue {
+                print("Refreshing alerts.")
+                alertViewModel.fetchAlerts()
+            }
         }
     }
 }

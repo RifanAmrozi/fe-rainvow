@@ -55,8 +55,8 @@ struct AddCamView: View {
                     HStack {
                         if isLoading {
                             ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                .scaleEffect(0.8)
+                                .progressViewStyle(CircularProgressViewStyle(tint: .black))
+                                .scaleEffect(1.5)
                         }
                         Text(isLoading ? "Saving..." : "Save")
                             .font(.system(size: 16, weight: .semibold))

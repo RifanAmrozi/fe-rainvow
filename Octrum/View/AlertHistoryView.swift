@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct AlertHistoryView: View {
-    @StateObject private var userViewModel = UserViewModel()
-    @StateObject private var alertHistoryViewModel = AlertHistoryViewModel()
+    @ObservedObject private var userViewModel = UserViewModel.shared
+    @ObservedObject private var alertHistoryViewModel = AlertHistoryViewModel.shared
+    @EnvironmentObject var webSocketManager: WebSocketManager
     @State private var selectedTab = "true"
     
     var body: some View {
@@ -46,28 +47,34 @@ struct AlertHistoryView: View {
             ScrollView {
                 LazyVStack(spacing: 12) {
                     if selectedTab == "true" {
-                        // Confirmed Alerts
                         if alertHistoryViewModel.isLoadingConfirmed {
                             ProgressView()
-                                .padding()
+                                .scaleEffect(1.5)
+                                .tint(.black)
+                                .frame(maxWidth: .infinity)
+                                .padding(.top, 100)
                         } else if alertHistoryViewModel.confirmedAlerts.isEmpty {
                             Text("No confirmed alerts")
                                 .foregroundColor(.gray)
-                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .padding(.top, 100)
                         } else {
                             ForEach(alertHistoryViewModel.confirmedAlerts) { alert in
                                 AlertHistoryCard(alert: alert)
                             }
                         }
                     } else {
-                        // Ignored Alerts
                         if alertHistoryViewModel.isLoadingIgnored {
                             ProgressView()
-                                .padding()
+                                .scaleEffect(1.5)
+                                .tint(.black)
+                                .frame(maxWidth: .infinity)
+                                .padding(.top, 100)
                         } else if alertHistoryViewModel.ignoredAlerts.isEmpty {
                             Text("No ignored alerts")
                                 .foregroundColor(.gray)
-                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .padding(.top, 100)
                         } else {
                             ForEach(alertHistoryViewModel.ignoredAlerts) { alert in
                                 AlertHistoryCard(alert: alert)
@@ -80,8 +87,14 @@ struct AlertHistoryView: View {
         }
         .background(themeBackground())
         .onAppear {
-            userViewModel.fetchUserProfile()
-            alertHistoryViewModel.fetchAlerts()
+            userViewModel.fetchDataOnce()
+            alertHistoryViewModel.fetchAlertsOnce()
+        }
+        .onChange(of: webSocketManager.newAlertReceived) { newValue in
+            if newValue {
+                print("🔄 Refreshing alert history due to new websocket message")
+                alertHistoryViewModel.fetchAlerts()
+            }
         }
     }
 }
