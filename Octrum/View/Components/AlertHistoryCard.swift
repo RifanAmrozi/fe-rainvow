@@ -15,7 +15,7 @@ struct AlertHistoryCard: View {
             Rectangle()
                 .fill(Color.gray.opacity(0.3))
                 .frame(width: 100, height: 68)
-                .cornerRadius(8)
+                .cornerRadius(10)
                 .overlay(
                     Image(systemName: "photo")
                         .foregroundColor(.gray)
@@ -47,8 +47,9 @@ struct AlertHistoryCard: View {
         }
         .padding(12)
         .background(Color.white)
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 4)
+        .cornerRadius(10)
+        .overlay(RoundedRectangle(cornerRadius: 10)
+            .stroke(Color.gray.opacity(0.3), lineWidth: 1))
     }
 }
 

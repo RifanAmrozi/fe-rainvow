@@ -50,7 +50,7 @@ struct CamListView: View {
                                 ForEach(viewModel.cameras) { camera in
                                     NavigationLink(destination: CamVideoView(camera: camera)) {
                                         ZStack(alignment: .bottomLeading) {
-                                            RoundedRectangle(cornerRadius: 20)
+                                            RoundedRectangle(cornerRadius: 10)
                                                 .fill(Color.gray.opacity(0.3))
                                                 .aspectRatio(1, contentMode: .fit)
                                             

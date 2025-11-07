@@ -39,7 +39,7 @@ struct AlertHistoryView: View {
             .background(Color.charcoal.opacity(0.1))
             .cornerRadius(9)
             .overlay(
-                RoundedRectangle(cornerRadius: 9).stroke(Color.charcoal, lineWidth: 1)
+                RoundedRectangle(cornerRadius: 9).stroke(Color.gray, lineWidth: 1)
             )
             .padding()
             
