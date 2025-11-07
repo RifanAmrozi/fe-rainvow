@@ -9,12 +9,25 @@ import Foundation
 import Combine
 
 class AlertViewModel: ObservableObject {
+    static let shared = AlertViewModel()
+    
     @Published var alerts: [Alert] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     
     private let alertService = AlertService()
     private let sessionManager = SessionManager.shared
+    private var hasFetchedData = false
+    
+    private init() {
+        // Private init to enforce singleton
+    }
+    
+    func fetchAlertsOnce() {
+        guard !hasFetchedData else { return }
+        hasFetchedData = true
+        fetchAlerts()
+    }
     
     func fetchAlerts() {
         guard let storeId = sessionManager.storeId else {

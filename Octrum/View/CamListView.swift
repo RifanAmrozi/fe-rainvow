@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CamListView: View {
     @EnvironmentObject var viewModel: CameraViewModel
-    @StateObject private var userViewModel = UserViewModel()
+    @ObservedObject private var userViewModel = UserViewModel.shared
     @State private var isAddingCamera = false
     
     let columns = [
@@ -108,6 +108,9 @@ struct CamListView: View {
             }
         }
         .tint(.white)
+        .onAppear {
+            userViewModel.fetchDataOnce()
+        }
     }
     
     // Profile

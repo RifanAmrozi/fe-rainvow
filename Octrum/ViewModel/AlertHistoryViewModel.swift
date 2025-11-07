@@ -10,6 +10,8 @@ import Combine
 
 @MainActor
 class AlertHistoryViewModel: ObservableObject {
+    static let shared = AlertHistoryViewModel()
+    
     @Published var confirmedAlerts: [Alert] = []
     @Published var ignoredAlerts: [Alert] = []
     @Published var isLoadingConfirmed = false
@@ -17,6 +19,17 @@ class AlertHistoryViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     private let alertService = AlertService()
+    private var hasFetchedData = false
+    
+    private init() {
+        // Private init to enforce singleton
+    }
+    
+    func fetchAlertsOnce() {
+        guard !hasFetchedData else { return }
+        hasFetchedData = true
+        fetchAlerts()
+    }
     
     func fetchAlerts() {
         guard let storeId = SessionManager.shared.storeId else {

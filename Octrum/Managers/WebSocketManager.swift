@@ -21,6 +21,9 @@ class WebSocketManager: ObservableObject {
     @Published var isConnected = false
     @Published var receivedMessages: [String] = []
     
+    // Alert trigger
+    @Published var newAlertReceived = false
+    
     func connect() {
         guard let url = URL(string: urlString) else {
             print("❌ Invalid WebSocket URL")
@@ -83,6 +86,9 @@ class WebSocketManager: ObservableObject {
                         self?.receivedMessages.append(text)
                         self?.messageCount += 1
                         
+                        // Trigger for AlertList and AlertHistory
+                        self?.newAlertReceived = true
+                        
                         // Send notification
                         self?.notificationManager.sendNotification(
                             title: "Suspicious Behavior Detected",
@@ -90,6 +96,11 @@ class WebSocketManager: ObservableObject {
                             // body: text,
                             badge: self?.messageCount
                         )
+                        
+                        // Reset trigger after a short delay
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            self?.newAlertReceived = false
+                        }
                     }
                 case .data(let data):
                     if let text = String(data: data, encoding: .utf8) {

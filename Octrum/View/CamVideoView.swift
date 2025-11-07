@@ -11,7 +11,7 @@ import WebRTC
 struct CamVideoView: View {
     let camera: Camera
     @StateObject private var webRTCManager = WebRTCManager()
-    @StateObject private var userViewModel = UserViewModel()
+    @ObservedObject private var userViewModel = UserViewModel.shared
     @State private var isFullscreen = false
     
     init(camera: Camera) {
