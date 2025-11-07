@@ -11,6 +11,8 @@ import WebRTC
 struct CamVideoView: View {
     let camera: Camera
     @StateObject private var webRTCManager = WebRTCManager()
+    @StateObject private var userViewModel = UserViewModel()
+    @State private var isFullscreen = false
     
     init(camera: Camera) {
         self.camera = camera
@@ -29,7 +31,7 @@ struct CamVideoView: View {
     var body: some View {
         VStack(spacing: 0) {
             // ----------------- Location -----------------
-            LocationCard()
+            LocationCard(store: userViewModel.store)
             
             // ----------------- Live Streaming -----------------
             ZStack {
@@ -83,10 +85,41 @@ struct CamVideoView: View {
                         )
                         
                         Spacer()
+                        
+                        if webRTCManager.isConnected {
+                            Button(action: {
+                                refreshVideoTrack()
+                            }, label: {
+                                Image(systemName: "arrow.clockwise")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(Color.black.opacity(0.6))
+                                    .clipShape(Circle())
+                            })
+                        }
                     }
                     .padding()
                     
                     Spacer()
+                    
+                    HStack {
+                        Spacer()
+                        
+                        if webRTCManager.isConnected {
+                            Button(action: {
+                                isFullscreen = true
+                            }, label: {
+                                Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(Color.black.opacity(0.6))
+                                    .clipShape(Circle())
+                            })
+                        }
+                    }
+                    .padding()
                 }
             }
             .background(.black)
@@ -108,22 +141,75 @@ struct CamVideoView: View {
         .onDisappear {
             webRTCManager.disconnect()
         }
+        .onTapGesture(count: 2) {
+            // Double tap to refresh video if black screen
+            refreshVideoTrack()
+        }
+        .fullScreenCover(isPresented: $isFullscreen) {
+            FullScreenVideoView(
+                webRTCManager: webRTCManager,
+                camera: camera,
+                isPresented: $isFullscreen
+            )
+        }
+    }
+    
+    private func refreshVideoTrack() {
+        print("🔄 Manual refresh button/gesture triggered")
+        webRTCManager.refreshVideoTrack()
     }
 }
 
 #if arch(arm64)
 struct WebRTCVideoView: UIViewRepresentable {
     let videoTrack: RTCVideoTrack
+    @State private var viewId = UUID()
     
     func makeUIView(context: Context) -> RTCMTLVideoView {
         let view = RTCMTLVideoView()
         view.videoContentMode = .scaleAspectFit
+        view.backgroundColor = UIColor.black
+        
+        // Remove from any previous view first
+        videoTrack.remove(view)
+        
+        // Ensure the video track is enabled before adding
+        videoTrack.isEnabled = true
+        
+        print("🖥️ Creating new video view - track enabled: \(videoTrack.isEnabled), readyState: \(videoTrack.readyState.rawValue)")
         videoTrack.add(view)
+        
+        // Force immediate layout and rendering
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+        
+        // Additional frame setup
+        DispatchQueue.main.async {
+            view.setNeedsDisplay()
+            view.layer.setNeedsDisplay()
+        }
+        
         return view
     }
     
     func updateUIView(_ uiView: RTCMTLVideoView, context: Context) {
-        // Left empty. Track is not expected to change.
+        // More aggressive track management
+        if !videoTrack.isEnabled {
+            print("🔄 Re-enabling video track in updateUIView")
+            videoTrack.isEnabled = true
+        }
+        
+        // Re-add track if needed (this can help with rendering issues)
+        videoTrack.remove(uiView)
+        videoTrack.add(uiView)
+        
+        // Force complete view refresh
+        uiView.setNeedsLayout()
+        uiView.layoutIfNeeded()
+        uiView.setNeedsDisplay()
+        uiView.layer.setNeedsDisplay()
+        
+        print("🔄 Updated video view - track enabled: \(videoTrack.isEnabled), readyState: \(videoTrack.readyState.rawValue)")
     }
 }
 #endif
