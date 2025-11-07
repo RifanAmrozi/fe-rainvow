@@ -3,7 +3,7 @@ import Combine
 
 public class AuthService {
     static let shared = AuthService()
-    private let baseURL = "http://10.60.61.85:3000"
+    private let baseURL = NetworkConfig.baseURL
     
     private init() {}
     

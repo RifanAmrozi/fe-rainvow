@@ -11,7 +11,7 @@ import Combine
 public class CameraService {
     static let shared = CameraService()
     
-    private let baseURL = "http://10.60.61.85:3000"
+    private let baseURL = NetworkConfig.baseURL
     private var session: SessionManager { SessionManager.shared }
     
     private init() {}

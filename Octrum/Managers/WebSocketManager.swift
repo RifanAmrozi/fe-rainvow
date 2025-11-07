@@ -10,7 +10,7 @@ import Combine
 
 class WebSocketManager: ObservableObject {
     private var webSocketTask: URLSessionWebSocketTask?
-    private let urlString = "ws://10.60.60.232:3000/ws/alerts"
+    private let urlString = NetworkConfig.webSocketURL
     private let notificationManager = NotificationManager.shared
     private var messageCount = 0
     private var reconnectTimer: Timer?

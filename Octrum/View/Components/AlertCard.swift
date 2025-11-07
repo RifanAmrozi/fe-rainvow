@@ -94,7 +94,8 @@ struct AlertCard: View {
     
     private func setupVideoPlayer() {
         // TODO: Video
-        let videoURLString = "http://10.60.60.232:3000/videos/\(alert.videoUrl).mp4"
+        let videoBaseUrl = NetworkConfig.videoBaseURL
+        let videoURLString = "\(videoBaseUrl)/\(alert.videoUrl)"
         
         if let url = URL(string: videoURLString) {
             player = AVPlayer(url: url)

@@ -8,7 +8,7 @@
 import Foundation
 
 class AlertService {
-    private let baseURL = "http://10.63.47.194:3000"
+    private let baseURL = NetworkConfig.baseURL
     
     func getAlerts(storeId: String) async throws -> [Alert] {
         guard let url = URL(string: "\(baseURL)/alert/store/\(storeId)") else {
