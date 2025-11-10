@@ -28,14 +28,16 @@ struct Alert: Identifiable, Codable {
         case aisleLoc = "aisle_loc"
     }
     
-    // Format timestamp untuk display
     var formattedTimestamp: String {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone.current
         
         if let date = formatter.date(from: incidentStart) {
             let displayFormatter = DateFormatter()
             displayFormatter.dateFormat = "HH:mm:ss - EEE dd/MM/yyyy"
+            displayFormatter.locale = Locale(identifier: "en_US_POSIX")
             return displayFormatter.string(from: date)
         }
         return incidentStart
