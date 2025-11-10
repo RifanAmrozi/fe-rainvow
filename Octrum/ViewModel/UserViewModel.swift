@@ -2,7 +2,9 @@ import Foundation
 import SwiftUI
 import Combine
 
-class UserViewModel: ObservableObject {
+public class UserViewModel: ObservableObject {
+    static let shared = UserViewModel()
+    
     @Published var userProfile: UserProfile?
     @Published var store: Store?
     @Published var isLoading: Bool = false
@@ -11,8 +13,11 @@ class UserViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let authService = AuthService.shared
     private let sessionManager = SessionManager.shared
+    private var hasFetchedData = false
     
-    init() {
+    func fetchDataOnce() {
+        guard !hasFetchedData else { return }
+        hasFetchedData = true
         fetchUserProfile()
         fetchStore()
     }

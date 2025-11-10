@@ -16,12 +16,25 @@ public class SessionManager: ObservableObject {
     private let accessTokenKey = "accessToken"
     private let userIdKey = "userId"
     private let storeIdKey = "storeId"
+    private let hasLaunchedBeforeKey = "hasLaunchedBefore"
     
     private init() {
+        if !UserDefaults.standard.bool(forKey: hasLaunchedBeforeKey) {
+            clearKeychainOnFirstLaunch()
+            UserDefaults.standard.set(true, forKey: hasLaunchedBeforeKey)
+        }
+        
         self.accessToken = getKeychain(key: accessTokenKey)
         self.userId = getKeychain(key: userIdKey)
         self.storeId = getKeychain(key: storeIdKey)
         self.isLoggedIn = self.accessToken != nil
+    }
+    
+    private func clearKeychainOnFirstLaunch() {
+        deleteKeychain(key: accessTokenKey)
+        deleteKeychain(key: userIdKey)
+        deleteKeychain(key: storeIdKey)
+        print("🧹 Cleared keychain on first launch")
     }
 
     func saveSession(token: String, userId: String, storeId: String) {

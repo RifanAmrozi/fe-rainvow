@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @StateObject private var userViewModel = UserViewModel()
+    @StateObject private var userViewModel = UserViewModel.shared
     @EnvironmentObject var session: SessionManager
     @Environment(\.dismiss) private var dismiss
     
@@ -30,7 +30,7 @@ struct ProfileView: View {
     
     var body: some View {
         ZStack {
-            Color.gray.opacity(0.2).ignoresSafeArea()
+            themeBackground().ignoresSafeArea()
             
             VStack {
                 HStack {}

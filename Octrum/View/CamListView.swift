@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CamListView: View {
     @EnvironmentObject var viewModel: CameraViewModel
-    @StateObject private var userViewModel = UserViewModel()
+    @ObservedObject private var userViewModel = UserViewModel.shared
     @State private var isAddingCamera = false
     
     let columns = [
@@ -50,7 +50,7 @@ struct CamListView: View {
                                 ForEach(viewModel.cameras) { camera in
                                     NavigationLink(destination: CamVideoView(camera: camera)) {
                                         ZStack(alignment: .bottomLeading) {
-                                            RoundedRectangle(cornerRadius: 20)
+                                            RoundedRectangle(cornerRadius: 10)
                                                 .fill(Color.gray.opacity(0.3))
                                                 .aspectRatio(1, contentMode: .fit)
                                             
@@ -101,13 +101,16 @@ struct CamListView: View {
                         await refreshCameras()
                     }
                 }
-                .background(.gray.opacity(0.2))
+                .background(themeBackground())
                 .sheet(isPresented: $isAddingCamera) {
                     AddCamView()
                 }
             }
         }
         .tint(.white)
+        .onAppear {
+            userViewModel.fetchDataOnce()
+        }
     }
     
     // Profile
