@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import UIKit
 
 class WebSocketManager: ObservableObject {
     private var webSocketTask: URLSessionWebSocketTask?
@@ -17,12 +18,101 @@ class WebSocketManager: ObservableObject {
     private var reconnectAttempts = 0
     private let maxReconnectAttempts = 10
     private var shouldReconnect = true
+    private var urlSession: URLSession!
+    private var backgroundTaskID: UIBackgroundTaskIdentifier = .invalid
+    private var pingTimer: Timer?
     
     @Published var isConnected = false
     @Published var receivedMessages: [String] = []
     
     // Alert trigger
     @Published var newAlertReceived = false
+    
+    init() {
+        // Configure URLSession for background operation
+        let configuration = URLSessionConfiguration.default
+        configuration.waitsForConnectivity = true
+        configuration.timeoutIntervalForRequest = 30
+        configuration.timeoutIntervalForResource = 60
+        self.urlSession = URLSession(configuration: configuration)
+        
+        // Register for app lifecycle notifications
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appWillEnterForeground),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
+    }
+    
+    @objc private func appDidEnterBackground() {
+        print("🔵 WebSocket: App entering background - starting background task")
+        startBackgroundTask()
+        // Start ping to keep connection alive
+        startPingTimer()
+    }
+    
+    @objc private func appWillEnterForeground() {
+        print("🟢 WebSocket: App entering foreground")
+        endBackgroundTask()
+        stopPingTimer()
+        // Ensure we're still connected
+        if !isConnected {
+            connect()
+        }
+    }
+    
+    private func startBackgroundTask() {
+        backgroundTaskID = UIApplication.shared.beginBackgroundTask { [weak self] in
+            print("⚠️ Background task expired, ending task")
+            self?.endBackgroundTask()
+        }
+    }
+    
+    private func endBackgroundTask() {
+        if backgroundTaskID != .invalid {
+            UIApplication.shared.endBackgroundTask(backgroundTaskID)
+            backgroundTaskID = .invalid
+        }
+    }
+    
+    private func startPingTimer() {
+        stopPingTimer()
+        // Send ping every 20 seconds to keep connection alive
+        pingTimer = Timer.scheduledTimer(withTimeInterval: 20.0, repeats: true) { [weak self] _ in
+            self?.sendPing()
+        }
+        if let pingTimer = pingTimer {
+            RunLoop.main.add(pingTimer, forMode: .common)
+        }
+    }
+    
+    private func stopPingTimer() {
+        pingTimer?.invalidate()
+        pingTimer = nil
+    }
+    
+    private func sendPing() {
+        webSocketTask?.sendPing { [weak self] error in
+            if let error = error {
+                print("❌ Ping failed: \(error.localizedDescription)")
+                // Connection lost, try to reconnect
+                DispatchQueue.main.async {
+                    self?.isConnected = false
+                    self?.scheduleReconnect()
+                }
+            } else {
+                print("🏓 Ping successful - connection alive")
+            }
+        }
+    }
     
     func connect() {
         guard let url = URL(string: urlString) else {
@@ -33,8 +123,8 @@ class WebSocketManager: ObservableObject {
         // Cancel any existing connection
         webSocketTask?.cancel(with: .goingAway, reason: nil)
         
-        let session = URLSession(configuration: .default)
-        webSocketTask = session.webSocketTask(with: url)
+        // Use the configured URLSession
+        webSocketTask = urlSession.webSocketTask(with: url)
         webSocketTask?.resume()
         
         isConnected = true
@@ -49,6 +139,8 @@ class WebSocketManager: ObservableObject {
         shouldReconnect = false
         reconnectTimer?.invalidate()
         reconnectTimer = nil
+        stopPingTimer()
+        endBackgroundTask()
         webSocketTask?.cancel(with: .goingAway, reason: nil)
         isConnected = false
         print("🔌 WebSocket disconnected")
@@ -82,6 +174,12 @@ class WebSocketManager: ObservableObject {
                 switch message {
                 case .string(let text):
                     print("📨 Received message: \(text)")
+                    
+                    // Start background task if in background
+                    let taskID = UIApplication.shared.beginBackgroundTask {
+                        print("⚠️ Message processing background task expired")
+                    }
+                    
                     DispatchQueue.main.async {
                         self?.receivedMessages.append(text)
                         self?.messageCount += 1
@@ -89,11 +187,16 @@ class WebSocketManager: ObservableObject {
                         // Trigger for AlertList and AlertHistory
                         self?.newAlertReceived = true
                         
-                        // Send notification
+                        // Check if app is in background
+                        let appState = UIApplication.shared.applicationState
+                        let isInBackground = (appState == .background || appState == .inactive)
+                        
+                        print("📱 App state: \(appState.rawValue), In background: \(isInBackground)")
+                        
+                        // Send notification immediately
                         self?.notificationManager.sendNotification(
                             title: "Suspicious Behavior Detected",
                             body: "Check it out ASAP!",
-                            // body: text,
                             badge: self?.messageCount
                         )
                         
@@ -101,21 +204,37 @@ class WebSocketManager: ObservableObject {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             self?.newAlertReceived = false
                         }
+                        
+                        // End background task
+                        if taskID != .invalid {
+                            UIApplication.shared.endBackgroundTask(taskID)
+                        }
                     }
+                    
                 case .data(let data):
                     if let text = String(data: data, encoding: .utf8) {
                         print("📨 Received data: \(text)")
+                        
+                        // Start background task if in background
+                        let taskID = UIApplication.shared.beginBackgroundTask {
+                            print("⚠️ Message processing background task expired")
+                        }
+                        
                         DispatchQueue.main.async {
                             self?.receivedMessages.append(text)
                             self?.messageCount += 1
                             
-                            // Send notification
+                            // Send notification immediately
                             self?.notificationManager.sendNotification(
                                 title: "Suspicious Behavior Detected",
                                 body: "Check it out ASAP!",
-                                // body: text,
                                 badge: self?.messageCount
                             )
+                            
+                            // End background task
+                            if taskID != .invalid {
+                                UIApplication.shared.endBackgroundTask(taskID)
+                            }
                         }
                     }
                 @unknown default:
@@ -148,6 +267,7 @@ class WebSocketManager: ObservableObject {
     }
     
     deinit {
+        NotificationCenter.default.removeObserver(self)
         disconnect()
     }
 }
