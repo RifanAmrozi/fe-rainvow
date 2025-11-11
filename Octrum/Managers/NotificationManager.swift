@@ -31,20 +31,17 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
     }
     
     // MARK: - UNUserNotificationCenterDelegate
-    
     // This method is called when notification arrives while app is in FOREGROUND
     func userNotificationCenter(_ center: UNUserNotificationCenter,
-                               willPresent notification: UNNotification,
-                               withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        // Show notification even when app is open (foreground)
+                                willPresent notification: UNNotification,
+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.banner, .sound, .badge])
-        print("✅ Notification displayed in foreground: \(notification.request.content.title)")
     }
     
     // This method is called when user taps on the notification
     func userNotificationCenter(_ center: UNUserNotificationCenter,
-                               didReceive response: UNNotificationResponse,
-                               withCompletionHandler completionHandler: @escaping () -> Void) {
+                                didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
         print("📱 User tapped notification: \(response.notification.request.content.title)")
         completionHandler()
     }
@@ -54,20 +51,16 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
         content.title = title
         content.body = body
         
-        // Set custom sound or default
         if let soundName = soundName {
             content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: soundName))
-            print("🔔 Using custom sound: \(soundName)")
         } else {
             content.sound = .default
-            print("🔔 Using default sound")
         }
         
         if let badge = badge {
             content.badge = NSNumber(value: badge)
         }
         
-        // Trigger immediately
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 0.1, repeats: false)
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
         

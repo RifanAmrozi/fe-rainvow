@@ -55,7 +55,6 @@ class WebSocketManager: ObservableObject {
     @objc private func appDidEnterBackground() {
         print("🔵 WebSocket: App entering background - starting background task")
         startBackgroundTask()
-        // Start ping to keep connection alive
         startPingTimer()
     }
     
@@ -63,7 +62,6 @@ class WebSocketManager: ObservableObject {
         print("🟢 WebSocket: App entering foreground")
         endBackgroundTask()
         stopPingTimer()
-        // Ensure we're still connected
         if !isConnected {
             connect()
         }
@@ -86,7 +84,7 @@ class WebSocketManager: ObservableObject {
     private func startPingTimer() {
         stopPingTimer()
         // Send ping every 20 seconds to keep connection alive
-        pingTimer = Timer.scheduledTimer(withTimeInterval: 20.0, repeats: true) { [weak self] _ in
+        pingTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { [weak self] _ in
             self?.sendPing()
         }
         if let pingTimer = pingTimer {
@@ -103,13 +101,12 @@ class WebSocketManager: ObservableObject {
         webSocketTask?.sendPing { [weak self] error in
             if let error = error {
                 print("❌ Ping failed: \(error.localizedDescription)")
-                // Connection lost, try to reconnect
                 DispatchQueue.main.async {
                     self?.isConnected = false
                     self?.scheduleReconnect()
                 }
             } else {
-                print("🏓 Ping successful - connection alive")
+                print("✅ Ping successful - connection alive")
             }
         }
     }

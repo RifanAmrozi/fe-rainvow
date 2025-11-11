@@ -28,13 +28,6 @@ public class AuthService {
         return URLSession.shared.dataTaskPublisher(for: urlRequest)
             .tryMap { data, response -> Data in
                 print("📥 Received response")
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("📊 HTTP Status: \(httpResponse.statusCode)")
-                }
-                if let responseString = String(data: data, encoding: .utf8) {
-                    print("📋 Response data: \(responseString)")
-                }
-                
                 guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
                     print("❌ Bad server response")
                     throw URLError(.badServerResponse)
@@ -60,13 +53,6 @@ public class AuthService {
         return URLSession.shared.dataTaskPublisher(for: urlRequest)
             .tryMap { data, response -> Data in
                 print("📥 Received user profile response")
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("📊 HTTP Status: \(httpResponse.statusCode)")
-                }
-                if let responseString = String(data: data, encoding: .utf8) {
-                    print("📋 User profile data: \(responseString)")
-                }
-                
                 guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
                     print("❌ Bad server response for user profile")
                     throw URLError(.badServerResponse)
@@ -92,13 +78,6 @@ public class AuthService {
         return URLSession.shared.dataTaskPublisher(for: urlRequest)
             .tryMap { data, response -> Data in
                 print("📥 Received store response")
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("📊 HTTP Status: \(httpResponse.statusCode)")
-                }
-                if let responseString = String(data: data, encoding: .utf8) {
-                    print("📋 Store data: \(responseString)")
-                }
-                
                 guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
                     print("❌ Bad server response for store")
                     throw URLError(.badServerResponse)

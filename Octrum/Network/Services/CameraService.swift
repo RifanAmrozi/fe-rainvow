@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 public class CameraService {
-    static let shared = CameraService()
+    @MainActor static let shared = CameraService()
     
     private let baseURL = NetworkConfig.baseURL
     private var session: SessionManager { SessionManager.shared }
@@ -28,10 +28,6 @@ public class CameraService {
         
         return URLSession.shared.dataTaskPublisher(for: url)
             .tryMap { data, response -> Data in
-                if let jsonString = String(data: data, encoding: .utf8) {
-                    print("Raw API Response: \(jsonString)")
-                }
-                
                 guard let httpResponse = response as? HTTPURLResponse else {
                     throw URLError(.badServerResponse)
                 }

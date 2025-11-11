@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct MainView: View {
-    @StateObject private var camViewModel = CameraViewModel()
     @EnvironmentObject var session: SessionManager
     
     init() {
@@ -23,7 +22,6 @@ struct MainView: View {
                         Image(systemName: "video.fill")
                         Text("CCTV")
                     }
-                    .environmentObject(camViewModel)
                 
                 AlertListView()
                     .tabItem {

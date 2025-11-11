@@ -14,7 +14,6 @@ class WebRTCDelegate: NSObject, RTCPeerConnectionDelegate {
         print("📺 Stream added with \(stream.videoTracks.count) video tracks")
         if let videoTrack = stream.videoTracks.first {
             print("✅ Video track found in stream - enabled: \(videoTrack.isEnabled)")
-            // Ensure video track is enabled
             videoTrack.isEnabled = true
             onTrack?(videoTrack)
         } else {
@@ -26,7 +25,6 @@ class WebRTCDelegate: NSObject, RTCPeerConnectionDelegate {
         print("📡 RTP Receiver added - track kind: \(rtpReceiver.track?.kind ?? "unknown")")
         if let videoTrack = rtpReceiver.track as? RTCVideoTrack {
             print("✅ Video track found in RTP receiver - enabled: \(videoTrack.isEnabled)")
-            // Ensure video track is enabled
             videoTrack.isEnabled = true
             onTrack?(videoTrack)
         } else {
