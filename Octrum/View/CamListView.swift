@@ -101,7 +101,7 @@ struct CamListView: View {
                 }
                 .background(themeBackground())
                 .sheet(isPresented: $isAddingCamera) {
-                    AddCamView()
+                    AddCamView().environmentObject(viewModel)
                 }
             }
         }
