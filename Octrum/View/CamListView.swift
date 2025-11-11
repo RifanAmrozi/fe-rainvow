@@ -101,14 +101,17 @@ struct CamListView: View {
                 }
                 .background(themeBackground())
                 .sheet(isPresented: $isAddingCamera) {
-                    AddCamView().environmentObject(viewModel)
+                    AddCamView()
                 }
             }
         }
         .tint(.white)
         .onAppear {
-            viewModel.fetchCameras()
             userViewModel.fetchDataOnce()
+            if viewModel.cameras.isEmpty && !viewModel.isLoading {
+                print("🔵 First launch: fetching initial cameras")
+                viewModel.fetchCameras()
+            }
         }
     }
     

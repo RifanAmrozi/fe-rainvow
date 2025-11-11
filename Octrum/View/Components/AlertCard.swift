@@ -10,9 +10,11 @@ import AVKit
 
 struct AlertCard: View {
     let alert: Alert
+    
     @State private var player: AVPlayer?
     @State private var isProcessing = false
     @State private var isUpdated = false
+    @State private var isValid: Bool? = nil
     
     private let alertService = AlertService()
     
@@ -55,34 +57,38 @@ struct AlertCard: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             
             HStack(spacing: 12) {
-                Button(action: {
-                    handleConfirm()
-                }, label: {
-                    Text("Confirm")
-                        .padding(.vertical, 12)
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .background(isUpdated ? Color.gray : Color.charcoal)
-                        .cornerRadius(10)
-                })
-                .disabled(isProcessing || isUpdated)
+                if isValid != false {
+                    Button(action: {
+                        handleConfirm()
+                    }, label: {
+                        Text(isValid==true ? "Confirmed" : "Confirm")
+                            .padding(.vertical, 12)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .background(isUpdated ? Color.gray : Color.charcoal)
+                            .cornerRadius(10)
+                    })
+                    .disabled(isProcessing || isUpdated)
+                }
                 
-                Button(action: {
-                    handleIgnore()
-                }, label: {
-                    Text("Ignore")
-                        .padding(.vertical, 12)
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(isUpdated ? Color.gray : Color.red)
-                        .frame(maxWidth: .infinity)
-                        .cornerRadius(10)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(isUpdated ? Color.gray : Color.red, lineWidth: 2)
-                        )
-                })
-                .disabled(isProcessing || isUpdated)
+                if isValid != true {
+                    Button(action: {
+                        handleIgnore()
+                    }, label: {
+                        Text(isValid==false ? "Ignored" : "Ignore")
+                            .padding(.vertical, 12)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(isUpdated ? Color.gray : Color.red)
+                            .frame(maxWidth: .infinity)
+                            .cornerRadius(10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(isUpdated ? Color.gray : Color.red, lineWidth: 2)
+                            )
+                    })
+                    .disabled(isProcessing || isUpdated)
+                }
             }
             .padding(.top, 8)
         }
@@ -113,6 +119,7 @@ struct AlertCard: View {
                 try await alertService.updateAlertStatus(alertId: alert.id, isValid: true)
                 print("✅ Alert confirmed successfully")
                 isUpdated = true
+                isValid = true
             } catch {
                 print("❌ Error confirming alert: \(error.localizedDescription)")
             }
@@ -127,6 +134,7 @@ struct AlertCard: View {
                 try await alertService.updateAlertStatus(alertId: alert.id, isValid: false)
                 print("✅ Alert ignored successfully")
                 isUpdated = true
+                isValid = false
             } catch {
                 print("❌ Error ignoring alert: \(error.localizedDescription)")
             }

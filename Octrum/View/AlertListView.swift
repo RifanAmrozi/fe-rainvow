@@ -30,7 +30,10 @@ struct AlertListView: View {
         .background(themeBackground())
         .onAppear {
             userViewModel.fetchDataOnce()
-            viewModel.fetchAlerts()
+            if viewModel.alerts.isEmpty && !viewModel.isLoading {
+                print("🔵 First launch: fetching initial alerts")
+                viewModel.fetchAlerts()
+            }
         }
         .onChange(of: webSocketManager.newAlertReceived) { newValue in
             if newValue {
@@ -55,14 +58,9 @@ struct AlertListView: View {
     
     private var loadingView: some View {
         VStack {
-            Spacer()
             ProgressView()
                 .scaleEffect(1.5)
                 .tint(.black)
-            Text("Loading alerts...")
-                .font(.system(size: 14))
-                .foregroundColor(.gray)
-                .padding(.top, 8)
             Spacer()
         }
     }
