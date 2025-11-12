@@ -10,6 +10,7 @@ import AVKit
 
 struct AlertCard: View {
     let alert: Alert
+    var onStatusUpdated: (() -> Void)?
     
     @State private var player: AVPlayer?
     @State private var isProcessing = false
@@ -19,6 +20,13 @@ struct AlertCard: View {
     private let alertService = AlertService()
     
     var body: some View {
+        NavigationLink(destination: AlertDetailView(alertId: alert.id)) {
+            cardContent
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+        
+    private var cardContent: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text("Activity Detected!")
                 .font(.system(size: 16, weight: .semibold))
@@ -102,7 +110,7 @@ struct AlertCard: View {
             setupVideoPlayer()
         }
     }
-    
+        
     private func setupVideoPlayer() {
         let videoURLString = alert.videoUrl
         

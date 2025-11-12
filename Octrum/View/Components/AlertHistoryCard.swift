@@ -2,7 +2,7 @@
 //  AlertHistoryCard.swift
 //  Octrum
 //
-//  Created by AI Assistant on 07/11/25.
+//  Created by Marcelinus Gerardo on 07/11/25.
 //
 
 import SwiftUI
@@ -11,6 +11,13 @@ struct AlertHistoryCard: View {
     let alert: Alert
     
     var body: some View {
+        NavigationLink(destination: AlertDetailView(alertId: alert.id)) {
+            cardContent
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+    
+    private var cardContent: some View {
         HStack(spacing: 14) {
             Rectangle()
                 .fill(Color.gray.opacity(0.3))
