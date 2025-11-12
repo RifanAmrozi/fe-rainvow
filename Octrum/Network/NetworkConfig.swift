@@ -8,7 +8,7 @@
 import Foundation
 
 struct NetworkConfig {
-    static let baseIP = "10.63.47.194"
+    static let baseIP = "10.60.53.41"
     
     static let httpPort = "3000"
     

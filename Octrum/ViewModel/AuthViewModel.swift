@@ -10,6 +10,7 @@ public class AuthViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let authService = AuthService.shared
     private let sessionManager = SessionManager.shared
+    private let deviceViewModel = DeviceViewModel()
     
     func login() {
         isLoading = true
@@ -33,8 +34,14 @@ public class AuthViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     self?.isLoading = false
                 }
+                
                 self?.sessionManager.saveSession(
                     token: response.accessToken,
+                    userId: response.id,
+                    storeId: response.storeId
+                )
+                
+                self?.deviceViewModel.registerDeviceAfterLogin(
                     userId: response.id,
                     storeId: response.storeId
                 )

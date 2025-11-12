@@ -12,7 +12,7 @@ struct LoginResponse: Codable {
     let tokenType: String
     let id: String
     let storeId: String
-
+    
     enum CodingKeys: String, CodingKey {
         case accessToken = "access_token"
         case tokenType = "token_type"
@@ -38,4 +38,21 @@ struct UserProfile: Codable {
         case role
         case storeId = "store_id"
     }
+}
+
+struct DeviceRegistrationRequest: Codable {
+    let userId: String
+    let storeId: String
+    let deviceToken: String
+    
+    enum CodingKeys: String, CodingKey {
+        case userId = "user_id"
+        case storeId = "store_id"
+        case deviceToken = "device_token"
+    }
+}
+
+struct DeviceRegistrationResponse: Codable {
+    let success: Bool
+    let message: String?
 }
