@@ -68,4 +68,11 @@ class AlertViewModel: ObservableObject {
         fetchAlerts()
         try? await Task.sleep(nanoseconds: 500_000_000)
     }
+    
+    func clearData() {
+        alerts = []
+        errorMessage = nil
+        isLoading = false
+        print("🗑️ AlertViewModel: Data cleared")
+    }
 }

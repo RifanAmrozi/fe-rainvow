@@ -84,6 +84,9 @@ struct AlertHistoryView: View {
                 }
                 .padding(.horizontal)
             }
+            .refreshable {
+                await alertHistoryViewModel.refreshAlerts()
+            }
         }
         .background(themeBackground())
         .onAppear {
