@@ -35,12 +35,12 @@ struct AlertListView: View {
                 viewModel.fetchAlerts()
             }
         }
-        .onChange(of: webSocketManager.newAlertReceived) { newValue in
-            if newValue {
-                print("📨 New alert received via WebSocket, refreshing alerts...")
-                viewModel.fetchAlerts()
-            }
-        }
+//        .onChange(of: webSocketManager.newAlertReceived) { newValue in
+//            if newValue {
+//                print("📨 New alert received via WebSocket, refreshing alerts...")
+//                viewModel.fetchAlerts()
+//            }
+//        }
     }
     
     @ViewBuilder

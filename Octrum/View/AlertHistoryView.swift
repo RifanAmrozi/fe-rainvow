@@ -93,12 +93,12 @@ struct AlertHistoryView: View {
             userViewModel.fetchDataOnce()
             alertHistoryViewModel.fetchAlertsOnce()
         }
-        .onChange(of: webSocketManager.newAlertReceived) { newValue in
-            if newValue {
-                print("🔄 Refreshing alert history due to new websocket message")
-                alertHistoryViewModel.fetchAlerts()
-            }
-        }
+//        .onChange(of: webSocketManager.newAlertReceived) { newValue in
+//            if newValue {
+//                print("🔄 Refreshing alert history due to new websocket message")
+//                alertHistoryViewModel.fetchAlerts()
+//            }
+//        }
     }
 }
 

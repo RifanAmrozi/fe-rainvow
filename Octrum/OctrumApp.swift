@@ -42,7 +42,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct OctrumApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var session = SessionManager.shared
-    @StateObject private var webSocketManager = WebSocketManager()
+//    @StateObject private var webSocketManager = WebSocketManager()
     @Environment(\.scenePhase) private var scenePhase
     
     private let notificationManager = NotificationManager.shared
@@ -53,28 +53,28 @@ struct OctrumApp: App {
                 MainView()
                     .environmentObject(session)
                     .environmentObject(webSocketManager)
-                    .onAppear {
-                        webSocketManager.connect()
-                    }
+//                    .onAppear {
+//                        webSocketManager.connect()
+//                    }
             } else {
                 LoginView()
                     .environmentObject(session)
             }
         }
-        .onChange(of: scenePhase) { newPhase in
-            switch newPhase {
-            case .active:
-                print("🟢 App is active - WebSocket connected")
-                if session.isLoggedIn && !webSocketManager.isConnected {
-                    webSocketManager.connect()
-                }
-            case .inactive:
-                print("🟡 App is inactive - WebSocket stays connected")
-            case .background:
-                print("🔵 App is in background - WebSocket stays connected")
-            @unknown default:
-                break
-            }
-        }
+//        .onChange(of: scenePhase) { newPhase in
+//            switch newPhase {
+//            case .active:
+//                print("🟢 App is active - WebSocket connected")
+//                if session.isLoggedIn && !webSocketManager.isConnected {
+//                    webSocketManager.connect()
+//                }
+//            case .inactive:
+//                print("🟡 App is inactive - WebSocket stays connected")
+//            case .background:
+//                print("🔵 App is in background - WebSocket stays connected")
+//            @unknown default:
+//                break
+//            }
+//        }
     }
 }
