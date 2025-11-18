@@ -16,6 +16,26 @@ struct AddCamView: View {
     @State private var isLoading: Bool = false
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
+    @State private var rtspUrlError: String = ""
+    
+    var isValidRtspUrl: Bool {
+        guard !rtspUrl.isEmpty else { return false }
+        
+        let lowercased = rtspUrl.lowercased()
+        guard lowercased.hasPrefix("rtsp://") || lowercased.hasPrefix("rtsps://") else {
+            return false
+        }
+        
+        guard let url = URL(string: rtspUrl) else {
+            return false
+        }
+        
+        guard url.host != nil else {
+            return false
+        }
+        
+        return true
+    }
     
     var body: some View {
         NavigationView {
@@ -47,6 +67,13 @@ struct AddCamView: View {
                     autocapitalization: .never
                 )
                 
+                if !rtspUrl.isEmpty && !isValidRtspUrl {
+                    Text("Invalid RTSP URL format. Must start with rtsp:// or rtsps://")
+                        .font(.system(size: 12))
+                        .foregroundColor(.red)
+                        .padding(.top, 4)
+                }
+                
                 Spacer().frame(height: 32)
                 
                 Button(action: {
@@ -63,11 +90,11 @@ struct AddCamView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
-                    .background(isLoading ? Color.gray : Color.charcoal)
+                    .background(isLoading || !isValidRtspUrl || name.isEmpty || aisleLoc.isEmpty ? Color.gray : Color.charcoal)
                     .foregroundColor(.white)
                     .cornerRadius(10)
                 })
-                .disabled(isLoading || name.isEmpty || aisleLoc.isEmpty || rtspUrl.isEmpty)
+                .disabled(isLoading || name.isEmpty || aisleLoc.isEmpty || rtspUrl.isEmpty || !isValidRtspUrl)
                 
                 Spacer()
             }
