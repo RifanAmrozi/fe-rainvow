@@ -10,15 +10,21 @@ import AVKit
 
 struct AlertDetailView: View {
     let alertId: String
+    let alert: Alert?
     
     @StateObject private var viewModel: AlertDetailViewModel
     @ObservedObject private var userViewModel = UserViewModel.shared
     @Environment(\.dismiss) var dismiss
     @State private var player: AVPlayer?
     
-    init(alertId: String) {
+    init(alertId: String, alert: Alert? = nil) {
         self.alertId = alertId
-        _viewModel = StateObject(wrappedValue: AlertDetailViewModel(alertId: alertId))
+        self.alert = alert
+
+        _viewModel = StateObject(wrappedValue: AlertDetailViewModel(
+            alertId: alertId,
+            existingAlert: alert
+        ))
     }
     
     var body: some View {
@@ -40,6 +46,11 @@ struct AlertDetailView: View {
             .navigationBarTitleDisplayMode(.inline)
             .task {
                 await viewModel.fetchAlertDetail()
+            }
+            .onAppear {
+                if let alertDetail = viewModel.alertDetail {
+                    setupVideoPlayer(videoUrl: alertDetail.videoUrl)
+                }
             }
             .onChange(of: viewModel.alertDetail) { alertDetail in
                 if let alertDetail = alertDetail {

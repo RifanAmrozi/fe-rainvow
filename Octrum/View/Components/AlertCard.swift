@@ -20,7 +20,7 @@ struct AlertCard: View {
     private let alertService = AlertService()
     
     var body: some View {
-        NavigationLink(destination: AlertDetailView(alertId: alert.id)) {
+        NavigationLink(destination: AlertDetailView(alertId: alert.id, alert: alert)) {
             cardContent
         }
         .buttonStyle(PlainButtonStyle())

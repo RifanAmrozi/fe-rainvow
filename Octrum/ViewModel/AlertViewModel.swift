@@ -57,9 +57,27 @@ class AlertViewModel: ObservableObject {
                 self.isLoading = false
                 print("✅ Fetched \(fetchedAlerts.count) alerts")
             } catch {
-                self.errorMessage = error.localizedDescription
+                let nsError = error as NSError
+                if nsError.domain == NSURLErrorDomain {
+                    switch nsError.code {
+                    case -1011: // HTTP 500 Internal Server Error
+                        self.errorMessage = "Server error. Please try again later or contact support."
+                        print("❌ HTTP 500: Server internal error - \(error.localizedDescription)")
+                    case -1001: // Timeout
+                        self.errorMessage = "Request timeout. Please check your internet connection."
+                        print("❌ Timeout error: \(error.localizedDescription)")
+                    case -1009: // No internet
+                        self.errorMessage = "No internet connection. Please check your network."
+                        print("❌ No internet: \(error.localizedDescription)")
+                    default:
+                        self.errorMessage = "Network error: \(error.localizedDescription)"
+                        print("❌ Network error (\(nsError.code)): \(error.localizedDescription)")
+                    }
+                } else {
+                    self.errorMessage = error.localizedDescription
+                    print("❌ Error fetching alerts: \(error.localizedDescription)")
+                }
                 self.isLoading = false
-                print("❌ Error fetching alerts: \(error.localizedDescription)")
             }
         }
     }
