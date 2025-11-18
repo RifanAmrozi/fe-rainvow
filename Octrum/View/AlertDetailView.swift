@@ -20,7 +20,7 @@ struct AlertDetailView: View {
     init(alertId: String, alert: Alert? = nil) {
         self.alertId = alertId
         self.alert = alert
-
+        
         _viewModel = StateObject(wrappedValue: AlertDetailViewModel(
             alertId: alertId,
             existingAlert: alert
@@ -176,53 +176,51 @@ struct AlertDetailView: View {
                 }
                 
                 // ----------------- Action Button -----------------
-                if alertDetail.isValid == nil && !viewModel.isUpdated {
-                    actionButtons
-                        .padding(.horizontal)
-                }
+                actionButtons.padding(.horizontal)
             }
         }
     }
     
     private var actionButtons: some View {
         VStack(spacing: 12) {
-            Button(action: {
-                Task {
-                    await viewModel.confirmAlert()
-                }
-            }, label: {
-                HStack {
-                    if viewModel.isProcessing {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                    }
-                    Text(viewModel.isProcessing ? "Processing..." : "Confirm Alert")
-                        .font(.system(size: 16, weight: .semibold))
-                }
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(viewModel.isProcessing ? Color.gray : Color.charcoal)
-                .cornerRadius(10)
-            })
-            .disabled(viewModel.isProcessing)
+            var isValid = viewModel.alertDetail?.isValid
             
-            Button(action: {
-                Task {
-                    await viewModel.ignoreAlert()
-                }
-            }, label: {
-                Text("Ignore Alert")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.red)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.red, lineWidth: 2)
-                    )
-            })
-            .disabled(viewModel.isProcessing)
+            if isValid != false {
+                Button(action: {
+                    Task {
+                        await viewModel.confirmAlert()
+                    }
+                }, label: {
+                    Text(isValid==true ? "Confirmed" :"Confirm")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(viewModel.isProcessing||isValid==true ? Color.gray : Color.charcoal)
+                        .cornerRadius(10)
+                })
+                .disabled(viewModel.isProcessing || isValid == true)
+            }
+            
+            if isValid != true {
+                Button(action: {
+                    Task {
+                        await viewModel.ignoreAlert()
+                    }
+                }, label: {
+                    Text(isValid==false ? "Ignored" : "Ignore")
+                        .font(.system(size: 16, weight: .semibold))
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(viewModel.isProcessing||isValid==false ? Color.gray : .red)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(viewModel.isProcessing||isValid==false ? Color.gray : Color.red, lineWidth: 2)
+                        )
+                })
+                .disabled(viewModel.isProcessing || isValid == false)
+            }
         }
     }
     
