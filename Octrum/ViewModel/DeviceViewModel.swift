@@ -8,9 +8,6 @@
 import Foundation
 import Combine
 
-// MARK: - Device ViewModel
-// ✅ MVVM Pattern untuk handle device registration
-
 @MainActor
 class DeviceViewModel: ObservableObject {
     private let deviceService: DeviceService

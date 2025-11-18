@@ -7,7 +7,7 @@
 
 import Foundation
 
-class AlertService {
+public class AlertService {
     private let baseURL = NetworkConfig.baseURL
     
     func getAlerts(storeId: String) async throws -> [Alert] {

@@ -75,9 +75,4 @@ public class CameraViewModel: ObservableObject {
     func fetchCamera(id: String) -> AnyPublisher<Camera, Error> {
         return cameraService.fetchCamera(id: id)
     }
-    
-    func deleteCamera(at offsets: IndexSet) {
-        // cameras.remove(atOffsets: offsets)
-        // TODO: DELETE API (low priority)
-    }
 }

@@ -52,7 +52,7 @@ struct OctrumApp: App {
             if session.isLoggedIn {
                 MainView()
                     .environmentObject(session)
-                    .environmentObject(webSocketManager)
+//                    .environmentObject(webSocketManager)
 //                    .onAppear {
 //                        webSocketManager.connect()
 //                    }
