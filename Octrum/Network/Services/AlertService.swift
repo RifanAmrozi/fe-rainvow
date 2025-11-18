@@ -81,9 +81,12 @@ public class AlertService {
             throw URLError(.badURL)
         }
         
+        var accessToken = SessionManager.shared.accessToken ?? ""
+        
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
         
         let body: [String: Any] = ["is_valid": isValid]
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
