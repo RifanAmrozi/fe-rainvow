@@ -8,30 +8,41 @@
 import Foundation
 import Combine
 
+@MainActor
 class AlertViewModel: ObservableObject {
-    static let shared = AlertViewModel()
-    
     @Published var alerts: [Alert] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
     
-    private let alertService = AlertService()
-    private let sessionManager = SessionManager.shared
-    private var hasFetchedData = false
+    private let alertService: AlertService
+    private let sessionManager: SessionManager
     
-    private init() {
-        // Private init to enforce singleton
+    var emptyStateTitle: String {
+        "The alert clip view might be not optimal due to certain conditions:"
     }
     
-    func fetchAlertsOnce() {
-        guard !hasFetchedData else { return }
-        hasFetchedData = true
-        fetchAlerts()
+    var emptyStateMessage: String {
+        """
+        • Blurry view
+        • The person is too far
+        • The environment is too dark
+        • The person detected is children
+        • Overcrowded
+        """
+    }
+    
+    init(
+        alertService: AlertService = AlertService(),
+        sessionManager: SessionManager = SessionManager.shared
+    ) {
+        self.alertService = alertService
+        self.sessionManager = sessionManager
     }
     
     func fetchAlerts() {
         guard let storeId = sessionManager.storeId else {
-            errorMessage = "Store ID not found"
+            errorMessage = "Store ID not found. Please log in again."
+            print("❌ Error: Store ID not found")
             return
         }
         
@@ -42,18 +53,19 @@ class AlertViewModel: ObservableObject {
             do {
                 let fetchedAlerts = try await alertService.getAlerts(storeId: storeId)
                 
-                await MainActor.run {
-                    self.alerts = fetchedAlerts
-                    self.isLoading = false
-                    print("✅ Fetched \(fetchedAlerts.count) alerts")
-                }
+                self.alerts = fetchedAlerts
+                self.isLoading = false
+                print("✅ Fetched \(fetchedAlerts.count) alerts")
             } catch {
-                await MainActor.run {
-                    self.errorMessage = error.localizedDescription
-                    self.isLoading = false
-                    print("❌ Error fetching alerts: \(error.localizedDescription)")
-                }
+                self.errorMessage = error.localizedDescription
+                self.isLoading = false
+                print("❌ Error fetching alerts: \(error.localizedDescription)")
             }
         }
+    }
+    
+    func refreshAlerts() async {
+        fetchAlerts()
+        try? await Task.sleep(nanoseconds: 500_000_000)
     }
 }

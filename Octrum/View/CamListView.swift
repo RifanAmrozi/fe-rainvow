@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct CamListView: View {
-    @EnvironmentObject var viewModel: CameraViewModel
+    @StateObject private var viewModel = CameraViewModel()
     @ObservedObject private var userViewModel = UserViewModel.shared
+    
     @State private var isAddingCamera = false
     
     let columns = [
@@ -37,11 +38,8 @@ struct CamListView: View {
                     ScrollView {
                         if (viewModel.cameras.isEmpty) {
                             DisclaimerCard(
-                                title: "The CCTV list might not be available due to:",
-                                message: """
-                                    • Different WiFi network with the CCTV
-                                    • Bad internet connection
-                                    """
+                                title: viewModel.emptyStateTitle,
+                                message: viewModel.emptyStateMessage
                             )
                             .padding()
                             
@@ -110,6 +108,10 @@ struct CamListView: View {
         .tint(.white)
         .onAppear {
             userViewModel.fetchDataOnce()
+            if viewModel.cameras.isEmpty && !viewModel.isLoading {
+                print("🔵 First launch: fetching initial cameras")
+                viewModel.fetchCameras()
+            }
         }
     }
     
