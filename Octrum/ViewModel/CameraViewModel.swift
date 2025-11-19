@@ -32,6 +32,10 @@ public class CameraViewModel: ObservableObject {
             """
     }
     
+    var totalCameras: Int {
+        cameras.count
+    }
+    
     func fetchCameras() {
         isLoading = true
         errorMessage = nil

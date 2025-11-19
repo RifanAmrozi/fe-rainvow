@@ -51,6 +51,7 @@ struct OctrumApp: App {
         WindowGroup {
             if session.isLoggedIn {
                 MainView()
+                    .preferredColorScheme(.light)
                     .environmentObject(session)
 //                    .environmentObject(webSocketManager)
 //                    .onAppear {
@@ -58,6 +59,7 @@ struct OctrumApp: App {
 //                    }
             } else {
                 LoginView()
+                    .preferredColorScheme(.light)
                     .environmentObject(session)
             }
         }
