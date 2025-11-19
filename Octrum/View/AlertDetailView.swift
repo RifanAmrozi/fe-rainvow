@@ -14,8 +14,14 @@ struct AlertDetailView: View {
     
     @StateObject private var viewModel: AlertDetailViewModel
     @ObservedObject private var userViewModel = UserViewModel.shared
+    @ObservedObject private var stateManager = AlertStateManager.shared
     @Environment(\.dismiss) var dismiss
     @State private var player: AVPlayer?
+    
+    private var currentStatus: Bool? {
+        // Prioritas: state manager (local update) > viewModel.alertDetail?.isValid (dari API)
+        return stateManager.getAlertStatus(alertId: alertId) ?? viewModel.alertDetail?.isValid
+    }
     
     init(alertId: String, alert: Alert? = nil) {
         self.alertId = alertId
@@ -146,8 +152,16 @@ struct AlertDetailView: View {
                     Text("Decision")
                         .font(.system(size: 14, weight: .bold))
                     
-                    Text("Confirmed by User")
-                        .font(.system(size: 14, weight: .regular))
+                    if alertDetail.isValid==true {
+                        Text("Confirmed by \(alertDetail.updatedBy ?? "Unknown").")
+                            .font(.system(size: 14, weight: .regular))
+                    } else if  alertDetail.isValid==false {
+                        Text("Ignored by \(alertDetail.updatedBy ?? "Unknown").")
+                            .font(.system(size: 14, weight: .regular))
+                    } else {
+                        Text("Status pending.")
+                            .font(.system(size: 14, weight: .regular))
+                    }
                 }
                 .padding(16)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -179,47 +193,50 @@ struct AlertDetailView: View {
                 actionButtons.padding(.horizontal)
             }
         }
+        .refreshable {
+            await viewModel.refreshAlertDetail()
+        }
     }
     
     private var actionButtons: some View {
-        VStack(spacing: 12) {
-            var isValid = viewModel.alertDetail?.isValid
-            
-            if isValid != false {
+        HStack(spacing: 12) {
+            if currentStatus != false {
                 Button(action: {
                     Task {
                         await viewModel.confirmAlert()
+                        stateManager.updateAlertStatus(alertId: alertId, isValid: true)
                     }
                 }, label: {
-                    Text(isValid==true ? "Confirmed" :"Confirm")
+                    Text(currentStatus == true ? "Confirmed" : "Confirm")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
-                        .background(viewModel.isProcessing||isValid==true ? Color.gray : Color.charcoal)
+                        .background(viewModel.isProcessing || currentStatus == true ? Color.gray : Color.charcoal)
                         .cornerRadius(10)
                 })
-                .disabled(viewModel.isProcessing || isValid == true)
+                .disabled(viewModel.isProcessing || currentStatus == true)
             }
             
-            if isValid != true {
+            if currentStatus != true {
                 Button(action: {
                     Task {
                         await viewModel.ignoreAlert()
+                        stateManager.updateAlertStatus(alertId: alertId, isValid: false)
                     }
                 }, label: {
-                    Text(isValid==false ? "Ignored" : "Ignore")
+                    Text(currentStatus == false ? "Ignored" : "Ignore")
                         .font(.system(size: 16, weight: .semibold))
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(viewModel.isProcessing||isValid==false ? Color.gray : .red)
+                        .foregroundColor(viewModel.isProcessing || currentStatus == false ? Color.gray : .red)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
+                        .background(viewModel.isProcessing || currentStatus == false ? Color.gray.opacity(0.1) : Color.red.opacity(0.05))
                         .background(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(viewModel.isProcessing||isValid==false ? Color.gray : Color.red, lineWidth: 2)
+                                .stroke(viewModel.isProcessing || currentStatus == false ? Color.gray : Color.red, lineWidth: 2)
                         )
                 })
-                .disabled(viewModel.isProcessing || isValid == false)
+                .disabled(viewModel.isProcessing || currentStatus == false)
             }
         }
     }

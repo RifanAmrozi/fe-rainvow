@@ -54,8 +54,13 @@ class AlertViewModel: ObservableObject {
                 let fetchedAlerts = try await alertService.getAlerts(storeId: storeId)
                 
                 self.alerts = fetchedAlerts
+                
+                for alert in fetchedAlerts {
+                    AlertStateManager.shared.updateAlertStatus(alertId: alert.id, isValid: alert.isValid)
+                }
+                print("✅ Fetched \(fetchedAlerts.count) alerts and synced state manager")
+                
                 self.isLoading = false
-                print("✅ Fetched \(fetchedAlerts.count) alerts")
             } catch {
                 let nsError = error as NSError
                 if nsError.domain == NSURLErrorDomain {
@@ -83,6 +88,7 @@ class AlertViewModel: ObservableObject {
     }
     
     func refreshAlerts() async {
+        print("🔄 AlertViewModel: Manual refresh triggered")
         fetchAlerts()
         try? await Task.sleep(nanoseconds: 500_000_000)
     }

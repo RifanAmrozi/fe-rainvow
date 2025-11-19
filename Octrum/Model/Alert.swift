@@ -12,20 +12,24 @@ struct Alert: Identifiable, Codable {
     let title: String
     let incidentStart: String
     let isValid: Bool?
+    let photoUrl: String
     let videoUrl: String
     let notes: String?
     let cameraName: String
     let aisleLoc: String
+    let updatedBy: String?
     
     enum CodingKeys: String, CodingKey {
         case id
         case title
         case incidentStart = "incident_start"
         case isValid = "is_valid"
+        case photoUrl = "photo_url"
         case videoUrl = "video_url"
         case notes
         case cameraName = "camera_name"
         case aisleLoc = "aisle_loc"
+        case updatedBy = "updated_by"
     }
     
     var formattedTimestamp: String {
@@ -55,6 +59,7 @@ struct AlertDetailResponse: Identifiable, Codable, Equatable {
     let cameraId: String
     let cameraName: String
     let aisleLoc: String
+    let updatedBy: String?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -67,6 +72,7 @@ struct AlertDetailResponse: Identifiable, Codable, Equatable {
         case cameraId = "camera_id"
         case cameraName = "camera_name"
         case aisleLoc = "aisle_loc"
+        case updatedBy = "updated_by"
     }
     
     var formattedTimestamp: String {

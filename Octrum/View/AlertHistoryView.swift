@@ -47,13 +47,7 @@ struct AlertHistoryView: View {
             ScrollView {
                 LazyVStack(spacing: 12) {
                     if selectedTab == "true" {
-                        if alertHistoryViewModel.isLoadingConfirmed {
-                            ProgressView()
-                                .scaleEffect(1.5)
-                                .tint(.black)
-                                .frame(maxWidth: .infinity)
-                                .padding(.top, 100)
-                        } else if alertHistoryViewModel.confirmedAlerts.isEmpty {
+                        if alertHistoryViewModel.confirmedAlerts.isEmpty {
                             Text("No confirmed alerts")
                                 .foregroundColor(.gray)
                                 .frame(maxWidth: .infinity)
@@ -64,13 +58,7 @@ struct AlertHistoryView: View {
                             }
                         }
                     } else {
-                        if alertHistoryViewModel.isLoadingIgnored {
-                            ProgressView()
-                                .scaleEffect(1.5)
-                                .tint(.black)
-                                .frame(maxWidth: .infinity)
-                                .padding(.top, 100)
-                        } else if alertHistoryViewModel.ignoredAlerts.isEmpty {
+                        if alertHistoryViewModel.ignoredAlerts.isEmpty {
                             Text("No ignored alerts")
                                 .foregroundColor(.gray)
                                 .frame(maxWidth: .infinity)

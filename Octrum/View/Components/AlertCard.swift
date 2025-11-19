@@ -14,10 +14,14 @@ struct AlertCard: View {
     
     @State private var player: AVPlayer?
     @State private var isProcessing = false
-    @State private var isUpdated = false
-    @State private var isValid: Bool? = nil
+    @ObservedObject private var stateManager = AlertStateManager.shared
     
     private let alertService = AlertService()
+    
+    private var currentStatus: Bool? {
+        // Prioritas: state manager (local update) > alert.isValid (dari API)
+        return stateManager.getAlertStatus(alertId: alert.id) ?? alert.isValid
+    }
     
     var body: some View {
         NavigationLink(destination: AlertDetailView(alertId: alert.id, alert: alert)) {
@@ -25,7 +29,7 @@ struct AlertCard: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
-        
+    
     private var cardContent: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text("Activity Detected!")
@@ -65,37 +69,38 @@ struct AlertCard: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             
             HStack(spacing: 12) {
-                if isValid != false {
+                if currentStatus != false {
                     Button(action: {
                         handleConfirm()
                     }, label: {
-                        Text(isValid==true ? "Confirmed" : "Confirm")
+                        Text(currentStatus == true ? "Confirmed" : "Confirm")
                             .padding(.vertical, 12)
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
-                            .background(isUpdated ? Color.gray : Color.charcoal)
+                            .background(isProcessing || currentStatus == true ? Color.gray : Color.charcoal)
                             .cornerRadius(10)
                     })
-                    .disabled(isProcessing || isUpdated)
+                    .disabled(isProcessing || currentStatus == true)
                 }
                 
-                if isValid != true {
+                if currentStatus != true {
                     Button(action: {
                         handleIgnore()
                     }, label: {
-                        Text(isValid==false ? "Ignored" : "Ignore")
+                        Text(currentStatus == false ? "Ignored" : "Ignore")
                             .padding(.vertical, 12)
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(isUpdated ? Color.gray : Color.red)
+                            .foregroundColor(isProcessing || currentStatus == false ? Color.gray : Color.red)
                             .frame(maxWidth: .infinity)
                             .cornerRadius(10)
+                            .background(isProcessing || currentStatus == false ? Color.gray.opacity(0.1) : Color.red.opacity(0.05))
                             .background(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .stroke(isUpdated ? Color.gray : Color.red, lineWidth: 2)
+                                    .stroke(isProcessing || currentStatus == false ? Color.gray : Color.red, lineWidth: 2)
                             )
                     })
-                    .disabled(isProcessing || isUpdated)
+                    .disabled(isProcessing || currentStatus == false)
                 }
             }
             .padding(.top, 8)
@@ -110,7 +115,7 @@ struct AlertCard: View {
             setupVideoPlayer()
         }
     }
-        
+    
     private func setupVideoPlayer() {
         let videoURLString = alert.videoUrl
         
@@ -126,8 +131,8 @@ struct AlertCard: View {
             do {
                 try await alertService.updateAlertStatus(alertId: alert.id, isValid: true)
                 print("✅ Alert confirmed successfully")
-                isUpdated = true
-                isValid = true
+                stateManager.updateAlertStatus(alertId: alert.id, isValid: true)
+                onStatusUpdated?()
             } catch {
                 print("❌ Error confirming alert: \(error.localizedDescription)")
             }
@@ -141,8 +146,8 @@ struct AlertCard: View {
             do {
                 try await alertService.updateAlertStatus(alertId: alert.id, isValid: false)
                 print("✅ Alert ignored successfully")
-                isUpdated = true
-                isValid = false
+                stateManager.updateAlertStatus(alertId: alert.id, isValid: false)
+                onStatusUpdated?()
             } catch {
                 print("❌ Error ignoring alert: \(error.localizedDescription)")
             }
@@ -157,9 +162,11 @@ struct AlertCard: View {
         title: "Suspicious Behaviour",
         incidentStart: "2025-11-04T05:22:46.938570",
         isValid: nil,
+        photoUrl: "https://example.com/photo.jpg",
         videoUrl: "shoplifting_track5_20251104_122246",
         notes: nil,
         cameraName: "Cam 01",
-        aisleLoc: "Aisle 1"
+        aisleLoc: "Aisle 1",
+        updatedBy: "ferdy"
     ))
 }
