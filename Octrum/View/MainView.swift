@@ -12,7 +12,17 @@ struct MainView: View {
     @StateObject var alertViewModel = AlertViewModel()
     
     init() {
-        UITabBar.appearance().backgroundColor = UIColor.white
+        let appearance = UITabBarAppearance()
+        appearance.configureWithTransparentBackground()
+        
+        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialLight)
+        
+        appearance.stackedLayoutAppearance.selected.iconColor = UIColor.systemBlue
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.systemBlue]
+        appearance.stackedLayoutAppearance.normal.iconColor = UIColor.systemGray
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.systemGray]
+        
+        UITabBar.appearance().scrollEdgeAppearance = appearance
     }
     
     var body: some View {

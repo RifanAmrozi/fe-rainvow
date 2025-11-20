@@ -12,6 +12,7 @@ struct AlertCard: View {
     let alert: Alert
     var onStatusUpdated: (() -> Void)?
     
+    @State private var isShowPerson = false
     @State private var player: AVPlayer?
     @State private var isProcessing = false
     @ObservedObject private var stateManager = AlertStateManager.shared
@@ -23,6 +24,10 @@ struct AlertCard: View {
         return stateManager.getAlertStatus(alertId: alert.id) ?? alert.isValid
     }
     
+    private var timeComponents: [String] {
+        alert.formattedTimestamp.components(separatedBy: "-")
+    }
+    
     var body: some View {
         NavigationLink(destination: AlertDetailView(alertId: alert.id, alert: alert)) {
             cardContent
@@ -32,13 +37,40 @@ struct AlertCard: View {
     
     private var cardContent: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text("Activity Detected!")
+            Text("ACTIVITY DETECTED!")
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.red)
             
-            Text(alert.title)
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.black)
+            VStack(alignment: .leading, spacing: 2) {
+                HStack {
+                    Text(alert.cameraName)
+                        .font(.system(size: 32, weight: .bold))
+                        .foregroundColor(.black)
+                    
+                    Text("•")
+                        .font(.system(size: 32, weight: .bold))
+                        .foregroundColor(.gray.opacity(0.5))
+                    
+                    Text(alert.aisleLoc)
+                        .font(.system(size: 32, weight: .regular))
+                        .foregroundColor(.black)
+                }
+                
+                HStack {
+                    Text(timeComponents.first ?? "")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.black)
+                    
+                    Text("-")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundColor(.black)
+                    
+                    Text(timeComponents.last ?? "")
+                        .font(.system(size: 14, weight: .regular))
+                        .foregroundColor(.black)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
             
             if let player = player {
                 VideoPlayer(player: player)
@@ -57,16 +89,37 @@ struct AlertCard: View {
                     )
             }
             
-            VStack(alignment: .leading, spacing: 2) {
-                Text("\(alert.cameraName) - \(alert.aisleLoc)")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.black)
+            VStack {
+                HStack {
+                    Image(systemName: "photo")
+                        .font(.system(size: 14))
+                        .foregroundColor(.black)
+                    Text("Review suspect")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.black)
+                    Spacer()
+                    Button(action: {
+                        isShowPerson.toggle()
+                    },label: {
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 14))
+                            .foregroundColor(.gray)
+                            .rotationEffect(isShowPerson == true ? .degrees(90) : .degrees(0))
+                    })
+                }
                 
-                Text(alert.formattedTimestamp)
-                    .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.gray)
+                if isShowPerson {
+                    AsyncImage(url: URL(string: alert.photoUrl)) {image in image
+                            .resizable()
+                    } placeholder: {
+                        ProgressView().tint(.white)
+                    }
+                }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 12)
+            .overlay(RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.gray.opacity(0.3), lineWidth: 1))
             
             HStack(spacing: 12) {
                 if currentStatus != false {
