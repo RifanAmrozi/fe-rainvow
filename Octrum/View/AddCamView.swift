@@ -10,13 +10,14 @@ import SwiftUI
 struct AddCamView: View {
     @EnvironmentObject var viewModel: CameraViewModel
     @Environment(\.presentationMode) var presentationMode
+    
+    // Alert callback
+    var onSaveComplete: ((Bool, String) -> Void)?
+    
     @State private var name: String = ""
     @State private var aisleLoc: String = ""
     @State private var rtspUrl: String = ""
     @State private var isLoading: Bool = false
-    @State private var showAlert: Bool = false
-    @State private var alertMessage: String = ""
-    @State private var rtspUrlError: String = ""
     
     var isValidRtspUrl: Bool {
         guard !rtspUrl.isEmpty else { return false }
@@ -106,15 +107,6 @@ struct AddCamView: View {
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.light, for: .navigationBar)
             .tint(.blue)
-            .alert("Add Camera", isPresented: $showAlert) {
-                Button("OK", role: .cancel) {
-                    if alertMessage.contains("success") {
-                        presentationMode.wrappedValue.dismiss()
-                    }
-                }
-            } message: {
-                Text(alertMessage)
-            }
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
@@ -122,15 +114,18 @@ struct AddCamView: View {
     
     private func saveCamera() {
         isLoading = true
+        let cameraName = name
         
         viewModel.addCamera(name: name, aisleLoc: aisleLoc, rtspUrl: rtspUrl) { success in
             isLoading = false
-            if success {
-                alertMessage = "Camera added successfully!"
-                showAlert = true
-            } else {
-                alertMessage = "Failed to add camera. Please try again."
-                showAlert = true
+            
+            presentationMode.wrappedValue.dismiss()
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                let message = success
+                    ? "\"Cam \(cameraName)\" is successfully added!"
+                    : "\"Cam \(cameraName)\" is failed to be added!"
+                onSaveComplete?(success, message)
             }
         }
     }

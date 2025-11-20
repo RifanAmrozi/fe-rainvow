@@ -12,6 +12,9 @@ struct CamListView: View {
     @ObservedObject private var userViewModel = UserViewModel.shared
     
     @State private var isAddingCamera = false
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+    @State private var isAlertSuccess = false
     
     let columns = [
         GridItem(.flexible(), spacing: 16),
@@ -118,12 +121,22 @@ struct CamListView: View {
                 }
                 .background(themeBackground())
                 .sheet(isPresented: $isAddingCamera) {
-                    AddCamView()
-                        .environmentObject(viewModel)
+                    AddCamView { success, message in
+                        alertMessage = message
+                        isAlertSuccess = success
+                        showAlert = true
+                    }
+                    .environmentObject(viewModel)
                 }
             }
         }
         .tint(.white)
+        .customAlert(
+            isPresented: $showAlert,
+            title: isAlertSuccess ? "Success!" : "Error",
+            message: alertMessage,
+            isSuccess: isAlertSuccess
+        )
         .onAppear {
             userViewModel.fetchDataOnce()
             if viewModel.cameras.isEmpty && !viewModel.isLoading {
