@@ -233,7 +233,7 @@ struct AlertDetailView: View {
                         .background(viewModel.isProcessing || currentStatus == false ? Color.gray.opacity(0.1) : Color.red.opacity(0.05))
                         .background(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(viewModel.isProcessing || currentStatus == false ? Color.gray : Color.red, lineWidth: 2)
+                                .stroke(viewModel.isProcessing || currentStatus == false ? Color.gray : Color.red, lineWidth: 0.8)
                         )
                 })
                 .disabled(viewModel.isProcessing || currentStatus == false)

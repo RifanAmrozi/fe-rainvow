@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct AlertHistoryCard: View {
     let alert: Alert
@@ -23,45 +24,38 @@ struct AlertHistoryCard: View {
                 .fill(Color.gray.opacity(0.3))
                 .frame(width: 100, height: 68)
                 .overlay(
-                    AsyncImage(url: URL(string: alert.photoUrl)) {image in image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 100, height: 68)
-                            .clipped()
-                    } placeholder: {
-                        ProgressView().tint(.white)
-                    }
+                    KFImage(URL(string: alert.photoUrl))
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 100, height: 68)
+                        .clipped()
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             
             VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 4) {
-                    Image(systemName: "camera.fill")
-                    Text("\(alert.cameraName) - Aisle \(alert.aisleLoc)")
-                }
-                .font(.system(size: 12, weight: .regular))
-                .foregroundColor(Color.gray)
                 
-                Text(alert.title)
+                Text("\(alert.cameraName) - \(alert.aisleLoc)")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.black)
-                    .lineLimit(2)
+                    .foregroundColor(Color.black)
                 
                 Text(alert.formattedTimestamp)
                     .font(.system(size: 12, weight: .regular))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.black.opacity(0.5))
+                                     
+                Spacer()
                 
                 if alert.isValid==true {
                     Text("Confirmed by \(alert.updatedBy ?? "Unknown").")
                         .font(.system(size: 12))
-                        .foregroundColor(.gray.opacity(0.8))
+                        .foregroundColor(.black.opacity(0.5))
                 } else if  alert.isValid==false {
                     Text("Ignored by \(alert.updatedBy ?? "Unknown").")
                         .font(.system(size: 12))
-                        .foregroundColor(.gray.opacity(0.8))
+                        .foregroundColor(.black.opacity(0.5))
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: 68, alignment: .leading)
+            .padding(.vertical, 2)
         }
         .padding(12)
         .background(Color.white)
