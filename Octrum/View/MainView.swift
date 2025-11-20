@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MainView: View {
     @EnvironmentObject var session: SessionManager
+    @StateObject var alertViewModel = AlertViewModel()
     
     init() {
         UITabBar.appearance().backgroundColor = UIColor.white
@@ -24,10 +25,12 @@ struct MainView: View {
                     }
                 
                 AlertListView()
+                    .environmentObject(alertViewModel)
                     .tabItem {
                         Image(systemName: "bell.fill")
                         Text("Alerts")
                     }
+                    .badge(alertViewModel.totalAlerts)
                 
                 AlertHistoryView()
                     .tabItem {
@@ -36,6 +39,9 @@ struct MainView: View {
                     }
             }
             .tint(.blue)
+            .onAppear {
+                alertViewModel.fetchAlerts()
+            }
         }
         .tint(.white)
     }

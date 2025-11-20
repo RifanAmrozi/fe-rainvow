@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AlertListView: View {
-    @StateObject private var viewModel = AlertViewModel()
+    @EnvironmentObject var viewModel: AlertViewModel
     @ObservedObject private var userViewModel = UserViewModel.shared
     @EnvironmentObject var webSocketManager: WebSocketManager
     
@@ -30,10 +30,6 @@ struct AlertListView: View {
         .background(themeBackground())
         .onAppear {
             userViewModel.fetchDataOnce()
-            if viewModel.alerts.isEmpty && !viewModel.isLoading {
-                print("🔵 First launch: fetching initial alerts")
-                viewModel.fetchAlerts()
-            }
         }
     }
     
