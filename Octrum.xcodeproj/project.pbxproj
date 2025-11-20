@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		565080E72ECECDBC00070EE3 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 565080E62ECECDBC00070EE3 /* Kingfisher */; };
 		565499922EA2334000B68E86 /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 565499912EA2334000B68E86 /* WebRTC */; };
 		568EE4362EB83E9A00F53EC6 /* alert.wav in Resources */ = {isa = PBXBuildFile; fileRef = 568EE4352EB83E9900F53EC6 /* alert.wav */; };
 		56FBA3A82ECC46E0004FD7BA /* OctrumNotificationService.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 56FBA39A2ECC3C91004FD7BA /* OctrumNotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -118,6 +119,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				565080E72ECECDBC00070EE3 /* Kingfisher in Frameworks */,
 				565499922EA2334000B68E86 /* WebRTC in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -198,6 +200,7 @@
 			name = Octrum;
 			packageProductDependencies = (
 				565499912EA2334000B68E86 /* WebRTC */,
+				565080E62ECECDBC00070EE3 /* Kingfisher */,
 			);
 			productName = Octrum;
 			productReference = 56B0E8B02EA22B8500DE40E7 /* Octrum.app */;
@@ -282,6 +285,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				565499902EA2334000B68E86 /* XCRemoteSwiftPackageReference "WebRTC" */,
+				565080E52ECECDBC00070EE3 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 56B0E8B12EA22B8500DE40E7 /* Products */;
@@ -744,6 +748,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		565080E52ECECDBC00070EE3 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.6.2;
+			};
+		};
 		565499902EA2334000B68E86 /* XCRemoteSwiftPackageReference "WebRTC" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/stasel/WebRTC.git";
@@ -755,6 +767,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		565080E62ECECDBC00070EE3 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 565080E52ECECDBC00070EE3 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
 		565499912EA2334000B68E86 /* WebRTC */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 565499902EA2334000B68E86 /* XCRemoteSwiftPackageReference "WebRTC" */;

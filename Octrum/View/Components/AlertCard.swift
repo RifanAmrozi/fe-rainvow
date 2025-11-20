@@ -7,6 +7,7 @@
 
 import SwiftUI
 import AVKit
+import Kingfisher
 
 struct AlertCard: View {
     let alert: Alert
@@ -37,9 +38,14 @@ struct AlertCard: View {
     
     private var cardContent: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text("ACTIVITY DETECTED!")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.red)
+            HStack {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundColor(.red)
+                
+                Text("ACTIVITY DETECTED!")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.red)
+            }
             
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
@@ -89,74 +95,11 @@ struct AlertCard: View {
                     )
             }
             
-            VStack {
-                HStack {
-                    Image(systemName: "photo")
-                        .font(.system(size: 14))
-                        .foregroundColor(.black)
-                    Text("Review suspect")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.black)
-                    Spacer()
-                    Button(action: {
-                        isShowPerson.toggle()
-                    },label: {
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 14))
-                            .foregroundColor(.gray)
-                            .rotationEffect(isShowPerson == true ? .degrees(90) : .degrees(0))
-                    })
-                }
-                
-                if isShowPerson {
-                    AsyncImage(url: URL(string: alert.photoUrl)) {image in image
-                            .resizable()
-                    } placeholder: {
-                        ProgressView().tint(.white)
-                    }
-                }
-            }
-            .padding(.vertical, 8)
-            .padding(.horizontal, 12)
-            .overlay(RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.gray.opacity(0.3), lineWidth: 1))
+            dropdownPhoto()
+                .padding(.top, 4)
             
-            HStack(spacing: 12) {
-                if currentStatus != false {
-                    Button(action: {
-                        handleConfirm()
-                    }, label: {
-                        Text(currentStatus == true ? "Confirmed" : "Confirm")
-                            .padding(.vertical, 12)
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .background(isProcessing || currentStatus == true ? Color.gray : Color.charcoal)
-                            .cornerRadius(10)
-                    })
-                    .disabled(isProcessing || currentStatus == true)
-                }
-                
-                if currentStatus != true {
-                    Button(action: {
-                        handleIgnore()
-                    }, label: {
-                        Text(currentStatus == false ? "Ignored" : "Ignore")
-                            .padding(.vertical, 12)
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(isProcessing || currentStatus == false ? Color.gray : Color.red)
-                            .frame(maxWidth: .infinity)
-                            .cornerRadius(10)
-                            .background(isProcessing || currentStatus == false ? Color.gray.opacity(0.1) : Color.red.opacity(0.05))
-                            .background(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(isProcessing || currentStatus == false ? Color.gray : Color.red, lineWidth: 2)
-                            )
-                    })
-                    .disabled(isProcessing || currentStatus == false)
-                }
-            }
-            .padding(.top, 8)
+            actionButton()
+                .padding(.top, 4)
         }
         .padding()
         .background(Color.white)
@@ -167,6 +110,80 @@ struct AlertCard: View {
         .onAppear {
             setupVideoPlayer()
         }
+    }
+    
+    private func dropdownPhoto() -> some View {
+        VStack {
+            HStack {
+                Image(systemName: "photo")
+                    .font(.system(size: 14))
+                    .foregroundColor(.black)
+                Text("Review suspect")
+                    .font(.system(size: 14, weight: .regular))
+                    .foregroundColor(.black)
+                Spacer()
+                Button(action: {
+                    isShowPerson.toggle()
+                }, label: {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                        .rotationEffect(isShowPerson == true ? .degrees(90) : .degrees(0))
+                })
+            }
+            
+            if isShowPerson {
+                KFImage(URL(string: alert.photoUrl))
+                    .resizable()
+                    .fade(duration: 0.3)
+                    .placeholder {
+                        ProgressView().tint(.white)
+                    }
+            }
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 16)
+        .overlay(RoundedRectangle(cornerRadius: 10)
+            .stroke(Color.gray.opacity(0.3), lineWidth: 1))
+    }
+    
+    private func actionButton() -> some View {
+        HStack(spacing: 12) {
+            if currentStatus != false {
+                Button(action: {
+                    handleConfirm()
+                }, label: {
+                    Text(currentStatus == true ? "Confirmed" : "Confirm")
+                        .padding(.vertical, 12)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .background(isProcessing || currentStatus == true ? Color.gray : Color.charcoal)
+                        .cornerRadius(10)
+                })
+                .disabled(isProcessing || currentStatus == true)
+            }
+            
+            if currentStatus != true {
+                Button(action: {
+                    handleIgnore()
+                }, label: {
+                    Text(currentStatus == false ? "Ignored" : "Ignore")
+                        .padding(.vertical, 12)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(isProcessing || currentStatus == false ? Color.gray : Color.red)
+                        .frame(maxWidth: .infinity)
+                        .cornerRadius(10)
+                        .background(isProcessing || currentStatus == false ? Color.gray.opacity(0.1) : Color.red.opacity(0.05))
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(isProcessing || currentStatus == false ? Color.gray : Color.red, lineWidth: 0.8)
+                        )
+                })
+                .disabled(isProcessing || currentStatus == false)
+            }
+        }
+        .padding(.top, 8)
     }
     
     private func setupVideoPlayer() {
