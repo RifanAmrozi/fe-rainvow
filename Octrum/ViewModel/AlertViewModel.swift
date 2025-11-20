@@ -13,21 +13,21 @@ class AlertViewModel: ObservableObject {
     @Published var alerts: [Alert] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
+    @Published var totalAlerts: Int = 0
     
     private let alertService: AlertService
     private let sessionManager: SessionManager
     
     var emptyStateTitle: String {
-        "The alert clip view might be not optimal due to certain conditions:"
+        "The system is unable to detect under following conditions:"
     }
     
     var emptyStateMessage: String {
         """
-        • Blurry view
-        • The person is too far
-        • The environment is too dark
-        • The person detected is children
-        • Overcrowded
+        • The view is blurry without any lightings 
+        • ⁠The person is too far from camera
+        • The person is too close from camera
+        • ⁠Children and crowded environment
         """
     }
     
@@ -58,7 +58,7 @@ class AlertViewModel: ObservableObject {
                 for alert in fetchedAlerts {
                     AlertStateManager.shared.updateAlertStatus(alertId: alert.id, isValid: alert.isValid)
                 }
-                print("✅ Fetched \(fetchedAlerts.count) alerts and synced state manager")
+                totalAlerts = fetchedAlerts.count
                 
                 self.isLoading = false
             } catch {
