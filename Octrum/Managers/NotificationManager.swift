@@ -71,6 +71,16 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
             
             print("📱 APNs Alert - Title: \(title), Body: \(body)")
             
+            // Check for media URL (rich notification)
+            if let mediaUrl = userInfo["media-url"] as? String {
+                print("🖼️ Rich notification with media: \(mediaUrl)")
+            }
+            
+            // Check for custom alert data
+            if let alertData = userInfo["alert_data"] as? [String: Any] {
+                print("📋 Alert data: \(alertData)")
+            }
+            
             DispatchQueue.main.async {
                 NotificationCenter.default.post(
                     name: NSNotification.Name("RefreshAlertList"),

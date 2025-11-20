@@ -7,7 +7,7 @@
 
 import Foundation
 
-class AlertService {
+public class AlertService {
     private let baseURL = NetworkConfig.baseURL
     
     func getAlerts(storeId: String) async throws -> [Alert] {
@@ -81,9 +81,12 @@ class AlertService {
             throw URLError(.badURL)
         }
         
+        var accessToken = SessionManager.shared.accessToken ?? ""
+        
         var request = URLRequest(url: url)
         request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
         
         let body: [String: Any] = ["is_valid": isValid]
         request.httpBody = try JSONSerialization.data(withJSONObject: body)

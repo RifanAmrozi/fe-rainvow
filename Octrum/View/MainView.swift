@@ -9,9 +9,20 @@ import SwiftUI
 
 struct MainView: View {
     @EnvironmentObject var session: SessionManager
+    @StateObject var alertViewModel = AlertViewModel()
     
     init() {
-        UITabBar.appearance().backgroundColor = UIColor.white
+        let appearance = UITabBarAppearance()
+        appearance.configureWithTransparentBackground()
+        
+        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterialLight)
+        
+        appearance.stackedLayoutAppearance.selected.iconColor = UIColor.systemBlue
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.systemBlue]
+        appearance.stackedLayoutAppearance.normal.iconColor = UIColor.systemGray
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.systemGray]
+        
+        UITabBar.appearance().scrollEdgeAppearance = appearance
     }
     
     var body: some View {
@@ -24,10 +35,12 @@ struct MainView: View {
                     }
                 
                 AlertListView()
+                    .environmentObject(alertViewModel)
                     .tabItem {
                         Image(systemName: "bell.fill")
                         Text("Alerts")
                     }
+                    .badge(alertViewModel.totalAlerts)
                 
                 AlertHistoryView()
                     .tabItem {
@@ -36,6 +49,9 @@ struct MainView: View {
                     }
             }
             .tint(.blue)
+            .onAppear {
+                alertViewModel.fetchAlerts()
+            }
         }
         .tint(.white)
     }

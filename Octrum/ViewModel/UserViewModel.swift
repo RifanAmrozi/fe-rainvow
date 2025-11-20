@@ -102,4 +102,13 @@ public class UserViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
+    
+    func clearData() {
+        userProfile = nil
+        store = nil
+        errorMessage = nil
+        hasFetchedData = false
+        cancellables.removeAll()
+        print("🗑️ UserViewModel: Data cleared")
+    }
 }

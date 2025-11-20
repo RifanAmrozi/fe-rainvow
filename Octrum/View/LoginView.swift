@@ -22,9 +22,12 @@ struct LoginView: View {
                 CustomTextField(label: "Password", placeholder: "Enter password", text: $viewModel.password, isSecure: true)
                 
                 if let errorMessage = viewModel.errorMessage {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
-                        .font(.caption)
+                    HStack {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .font(.caption)
+                        Spacer()
+                    }
                 }
                 
                 HStack(spacing: 8) {

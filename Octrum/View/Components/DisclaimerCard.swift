@@ -27,7 +27,7 @@ struct DisclaimerCard: View {
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.blue.opacity(0.1))
+        .background(.blue.opacity(0.05))
         .cornerRadius(10)
         .overlay(
             RoundedRectangle(cornerRadius: 10)

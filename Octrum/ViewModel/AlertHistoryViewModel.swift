@@ -26,8 +26,12 @@ class AlertHistoryViewModel: ObservableObject {
     }
     
     func fetchAlertsOnce() {
-        guard !hasFetchedData else { return }
+        guard !hasFetchedData else {
+            print("📦 AlertHistoryViewModel: Using cached data")
+            return
+        }
         hasFetchedData = true
+        print("🔵 AlertHistoryViewModel: First fetch - loading data")
         fetchAlerts()
     }
     
@@ -42,6 +46,12 @@ class AlertHistoryViewModel: ObservableObject {
         fetchIgnoredAlerts(storeId: storeId)
     }
     
+    func refreshAlerts() async {
+        print("🔄 AlertHistoryViewModel: Manual refresh triggered")
+        fetchAlerts()
+        try? await Task.sleep(nanoseconds: 500_000_000)
+    }
+    
     private func fetchConfirmedAlerts(storeId: String) {
         isLoadingConfirmed = true
         errorMessage = nil
@@ -50,9 +60,11 @@ class AlertHistoryViewModel: ObservableObject {
             do {
                 confirmedAlerts = try await alertService.getAlertsByValidity(storeId: storeId, isValid: true)
                 isLoadingConfirmed = false
+                print("✅ Fetched \(confirmedAlerts.count) confirmed alerts")
             } catch {
                 errorMessage = error.localizedDescription
                 isLoadingConfirmed = false
+                print("❌ Error fetching confirmed alerts: \(error.localizedDescription)")
             }
         }
     }
@@ -65,10 +77,22 @@ class AlertHistoryViewModel: ObservableObject {
             do {
                 ignoredAlerts = try await alertService.getAlertsByValidity(storeId: storeId, isValid: false)
                 isLoadingIgnored = false
+                print("✅ Fetched \(ignoredAlerts.count) ignored alerts")
             } catch {
                 errorMessage = error.localizedDescription
                 isLoadingIgnored = false
+                print("❌ Error fetching ignored alerts: \(error.localizedDescription)")
             }
         }
+    }
+    
+    func clearData() {
+        confirmedAlerts = []
+        ignoredAlerts = []
+        errorMessage = nil
+        hasFetchedData = false
+        isLoadingConfirmed = false
+        isLoadingIgnored = false
+        print("🗑️ AlertHistoryViewModel: Data cleared")
     }
 }

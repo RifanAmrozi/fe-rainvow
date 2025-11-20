@@ -47,13 +47,7 @@ struct AlertHistoryView: View {
             ScrollView {
                 LazyVStack(spacing: 12) {
                     if selectedTab == "true" {
-                        if alertHistoryViewModel.isLoadingConfirmed {
-                            ProgressView()
-                                .scaleEffect(1.5)
-                                .tint(.black)
-                                .frame(maxWidth: .infinity)
-                                .padding(.top, 100)
-                        } else if alertHistoryViewModel.confirmedAlerts.isEmpty {
+                        if alertHistoryViewModel.confirmedAlerts.isEmpty {
                             Text("No confirmed alerts")
                                 .foregroundColor(.gray)
                                 .frame(maxWidth: .infinity)
@@ -64,13 +58,7 @@ struct AlertHistoryView: View {
                             }
                         }
                     } else {
-                        if alertHistoryViewModel.isLoadingIgnored {
-                            ProgressView()
-                                .scaleEffect(1.5)
-                                .tint(.black)
-                                .frame(maxWidth: .infinity)
-                                .padding(.top, 100)
-                        } else if alertHistoryViewModel.ignoredAlerts.isEmpty {
+                        if alertHistoryViewModel.ignoredAlerts.isEmpty {
                             Text("No ignored alerts")
                                 .foregroundColor(.gray)
                                 .frame(maxWidth: .infinity)
@@ -84,18 +72,21 @@ struct AlertHistoryView: View {
                 }
                 .padding(.horizontal)
             }
+            .refreshable {
+                await alertHistoryViewModel.refreshAlerts()
+            }
         }
         .background(themeBackground())
         .onAppear {
             userViewModel.fetchDataOnce()
             alertHistoryViewModel.fetchAlertsOnce()
         }
-        .onChange(of: webSocketManager.newAlertReceived) { newValue in
-            if newValue {
-                print("🔄 Refreshing alert history due to new websocket message")
-                alertHistoryViewModel.fetchAlerts()
-            }
-        }
+//        .onChange(of: webSocketManager.newAlertReceived) { newValue in
+//            if newValue {
+//                print("🔄 Refreshing alert history due to new websocket message")
+//                alertHistoryViewModel.fetchAlerts()
+//            }
+//        }
     }
 }
 
