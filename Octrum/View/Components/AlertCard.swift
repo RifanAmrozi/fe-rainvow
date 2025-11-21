@@ -139,6 +139,7 @@ struct AlertCard: View {
                     .placeholder {
                         ProgressView().tint(.white)
                     }
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
             }
         }
         .padding(.vertical, 8)

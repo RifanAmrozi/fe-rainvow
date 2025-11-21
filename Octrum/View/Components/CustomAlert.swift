@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct CustomAlert: View {
-    let title: String
     let message: String
     let isSuccess: Bool
     let onDismiss: () -> Void
@@ -54,7 +53,6 @@ struct CustomAlert: View {
 
 struct CustomAlertModifier: ViewModifier {
     @Binding var isPresented: Bool
-    let title: String
     let message: String
     let isSuccess: Bool
     let onDismiss: (() -> Void)?
@@ -65,7 +63,6 @@ struct CustomAlertModifier: ViewModifier {
             
             if isPresented {
                 CustomAlert(
-                    title: title,
                     message: message,
                     isSuccess: isSuccess,
                     onDismiss: {
@@ -75,7 +72,7 @@ struct CustomAlertModifier: ViewModifier {
                 )
                 .zIndex(999)
                 .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 12.0) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                         if isPresented {
                             withAnimation {
                                 isPresented = false
@@ -92,7 +89,6 @@ struct CustomAlertModifier: ViewModifier {
 extension View {
     func customAlert(
         isPresented: Binding<Bool>,
-        title: String,
         message: String,
         isSuccess: Bool,
         onDismiss: (() -> Void)? = nil
@@ -100,7 +96,6 @@ extension View {
         self.modifier(
             CustomAlertModifier(
                 isPresented: isPresented,
-                title: title,
                 message: message,
                 isSuccess: isSuccess,
                 onDismiss: onDismiss
@@ -116,7 +111,6 @@ struct CustomAlert_Previews: PreviewProvider {
         }
         .overlay(
             CustomAlert(
-                title: "Success!",
                 message: "Camera added successfully!",
                 isSuccess: true,
                 onDismiss: {}

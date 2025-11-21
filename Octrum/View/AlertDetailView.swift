@@ -7,6 +7,8 @@
 
 import SwiftUI
 import AVKit
+import Kingfisher
+import Photos
 
 struct AlertDetailView: View {
     let alertId: String
@@ -66,7 +68,12 @@ struct AlertDetailView: View {
             
             Spacer()
         }
-        .background(themeBackground())
+        .background(Color.white)
+        .customAlert(
+            isPresented: $showDownloadAlert,
+            message: downloadMessage,
+            isSuccess: downloadSuccess
+        )
     }
     
     private var loadingView: some View {
@@ -126,6 +133,30 @@ struct AlertDetailView: View {
                         .padding(.top, 12)
                         .padding(.horizontal)
                 }
+                
+                VStack {
+                    HStack {
+                        Image(systemName: "photo")
+                            .font(.system(size: 14))
+                            .foregroundColor(.black)
+                        Text("The suspect")
+                            .font(.system(size: 14, weight: .regular))
+                            .foregroundColor(.black)
+                        Spacer()
+                    }
+                    
+                    KFImage(URL(string: alertDetail.photoUrl))
+                        .resizable()
+                        .fade(duration: 0.3)
+                        .placeholder {
+                            ProgressView().tint(.black)
+                        }
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+                .padding(16)
+                .overlay(RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.gray.opacity(0.3), lineWidth: 1))
+                .padding(.horizontal)
                 
                 // ----------------- Info -----------------
                 VStack(alignment: .leading, spacing: 4) {
@@ -191,6 +222,14 @@ struct AlertDetailView: View {
                 
                 // ----------------- Action Button -----------------
                 actionButtons.padding(.horizontal)
+                
+                // ----------------- Download Button -----------------
+                if let alertDetail = viewModel.alertDetail {
+                    downloadButton(videoUrl: alertDetail.videoUrl)
+                        .padding(.horizontal)
+                        .padding(.bottom)
+                        .padding(.top, -2)
+                }
             }
         }
         .refreshable {
@@ -249,6 +288,89 @@ struct AlertDetailView: View {
             return Color.red
         default:
             return Color.orange
+        }
+    }
+    
+    @State private var isDownloading = false
+    @State private var downloadSuccess = false
+    @State private var showDownloadAlert = false
+    @State private var downloadMessage = ""
+    
+    private func downloadButton(videoUrl: String) -> some View {
+        Button(action: {
+            Task {
+                await downloadVideo(videoUrl: videoUrl)
+            }
+        }, label: {
+            HStack(spacing: 12) {
+                Image(systemName: isDownloading ? "square.and.arrow.down.badge.clock" : "square.and.arrow.down")
+                    .font(.system(size: 20))
+                
+                if isDownloading {
+                    Text("Downloading...")
+                        .font(.system(size: 16, weight: .semibold))
+                } else {
+                    Text("Download Video")
+                        .font(.system(size: 16, weight: .semibold))
+                }
+            }
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(isDownloading ? Color.gray : Color.charcoal)
+            .cornerRadius(10)
+        })
+        .disabled(isDownloading)
+        
+    }
+    
+    private func downloadVideo(videoUrl: String) async {
+        isDownloading = true
+        
+        guard let url = URL(string: videoUrl) else {
+            downloadMessage = "Invalid video URL"
+            downloadSuccess = false
+            showDownloadAlert = true
+            isDownloading = false
+            return
+        }
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            
+            let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("alert_video_\(UUID().uuidString).mp4")
+            try data.write(to: tempURL)
+            
+            try await saveVideoToPhotos(url: tempURL)
+            try? FileManager.default.removeItem(at: tempURL)
+            
+            downloadMessage = "Video saved to Photos successfully!"
+            downloadSuccess = true
+            showDownloadAlert = true
+            
+        } catch {
+            print("❌ Download error: \(error.localizedDescription)")
+            downloadMessage = "Failed to download video. Please try again."
+            downloadSuccess = false
+            showDownloadAlert = true
+        }
+        
+        isDownloading = false
+    }
+    
+    private func saveVideoToPhotos(url: URL) async throws {
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
+            }) { success, error in
+                if success {
+                    continuation.resume()
+                } else if let error = error {
+                    continuation.resume(throwing: error)
+                } else {
+                    continuation.resume(throwing: NSError(domain: "PhotoSaveError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unknown error saving to Photos"]))
+                }
+            }
         }
     }
     

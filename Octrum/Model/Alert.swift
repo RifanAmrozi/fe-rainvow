@@ -54,6 +54,7 @@ struct AlertDetailResponse: Identifiable, Codable, Equatable {
     let title: String
     let incidentStart: String
     let isValid: Bool?
+    let photoUrl: String
     let videoUrl: String
     let notes: String?
     let storeId: String
@@ -67,6 +68,7 @@ struct AlertDetailResponse: Identifiable, Codable, Equatable {
         case title
         case incidentStart = "incident_start"
         case isValid = "is_valid"
+        case photoUrl = "photo_url"
         case videoUrl = "video_url"
         case notes
         case storeId = "store_id"

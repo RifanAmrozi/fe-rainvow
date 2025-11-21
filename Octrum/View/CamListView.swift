@@ -133,7 +133,6 @@ struct CamListView: View {
         .tint(.white)
         .customAlert(
             isPresented: $showAlert,
-            title: isAlertSuccess ? "Success!" : "Error",
             message: alertMessage,
             isSuccess: isAlertSuccess
         )
