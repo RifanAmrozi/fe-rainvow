@@ -12,6 +12,10 @@ struct LocationCard: View {
     
     var body: some View {
         HStack {
+            Image(systemName: "storefront.fill")
+                .font(.system(size: 20))
+                .foregroundColor(Color.blue)
+            
             VStack(alignment: .leading, spacing: 2) {
                 Text(store?.storeName ?? "")
                     .font(.system(size: 14, weight: .medium))
@@ -23,9 +27,6 @@ struct LocationCard: View {
             }
             
             Spacer()
-            
-            Image(systemName: "chevron.right.circle")
-                .foregroundColor(Color.blue)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
