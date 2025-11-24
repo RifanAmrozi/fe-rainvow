@@ -19,16 +19,23 @@ class AlertViewModel: ObservableObject {
     private let sessionManager: SessionManager
     
     var emptyStateTitle: String {
-        "The system is unable to detect under following conditions:"
+        String (
+            localized: "alert_list_empty_state_title",
+            defaultValue: "The system is unable to detect under following conditions:"
+        )
     }
     
     var emptyStateMessage: String {
-        """
-        • The view is blurry without any lightings 
-        • ⁠The person is too far from camera
-        • The person is too close from camera
-        • ⁠Children and crowded environment
-        """
+        String (
+            localized: "alert_list_empty_state_message",
+            defaultValue:
+                """
+                • The view is blurry without any lightings
+                • The person is too far from camera
+                • The person is too close from camera
+                • Children and crowded environment
+                """
+        )
     }
     
     init(

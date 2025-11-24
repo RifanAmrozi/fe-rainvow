@@ -22,14 +22,21 @@ public class CameraViewModel: ObservableObject {
     }
     
     var emptyStateTitle: String {
-        "The CCTV list might not be available due to:"
+        String(
+            localized: "camview_empty_state_title",
+            defaultValue: "The CCTV list might not be available due to:"
+        )
     }
     
     var emptyStateMessage: String {
+        String(
+            localized: "camview_empty_state_message",
+            defaultValue:
             """
             • Different WiFi network with the CCTV
             • Bad internet connection
             """
+        )
     }
     
     var totalCameras: Int {

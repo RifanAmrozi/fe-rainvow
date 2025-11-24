@@ -43,8 +43,8 @@ struct AddCamView: View {
             VStack(alignment: .leading) {
                 
                 CustomTextField(
-                    label: "CCTV Name",
-                    placeholder: "Cam 01",
+                    label: String(localized: "CCTV Name", defaultValue: "CCTV Name"),
+                    placeholder: "Camera 01",
                     text: $name,
                     isDisabled: isLoading
                 )
@@ -52,8 +52,8 @@ struct AddCamView: View {
                 Spacer().frame(height: 16)
                 
                 CustomTextField(
-                    label: "Location",
-                    placeholder: "Front Gate",
+                    label: String(localized: "Location", defaultValue: "Location"),
+                    placeholder: String(localized: "Front Aisle", defaultValue: "Front Aisle"),
                     text: $aisleLoc,
                     isDisabled: isLoading
                 )
@@ -61,7 +61,7 @@ struct AddCamView: View {
                 Spacer().frame(height: 16)
                 
                 CustomTextField(
-                    label: "RTSP Url",
+                    label: String(localized: "RTSP URL"),
                     placeholder: "rtsp://xx.xx.xx.xx:xxxx/stream",
                     text: $rtspUrl,
                     isDisabled: isLoading,
@@ -122,9 +122,16 @@ struct AddCamView: View {
             presentationMode.wrappedValue.dismiss()
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                let message = success
-                    ? "\"Cam \(cameraName)\" is successfully added!"
-                    : "\"Cam \(cameraName)\" is failed to be added!"
+                let message: String = success
+                    ? String(
+                        localized: "camera_add_success",
+                        defaultValue: "\"Cam \(cameraName)\" is successfully added!"
+                    )
+                    : String(
+                        localized: "camera_add_failed",
+                        defaultValue: "\"Cam \(cameraName)\" is failed to be added!"
+                    )
+
                 onSaveComplete?(success, message)
             }
         }

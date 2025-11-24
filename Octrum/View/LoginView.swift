@@ -7,19 +7,23 @@ struct LoginView: View {
     
     var body: some View {
         VStack {
-            Color.charcoal
-                .frame(height: 150)
-                .padding(.bottom, 10)
-                .ignoresSafeArea(edges: .top)
+            
+            Spacer()
+            
+            Image("TextLogo")
+                .resizable()
+                .scaledToFit()
+                .frame(height: 24)
+            
+            Text("login_to_account")
+                .font(.largeTitle)
+                .fontWeight(.medium)
+                .foregroundColor(.charcoal)
+                .padding(.bottom, 16)
             
             VStack(spacing: 20) {
-                Text("Login")
-                    .font(.largeTitle)
-                    .fontWeight(.medium)
-                    .foregroundColor(.charcoal)
-                
-                CustomTextField(label: "Username", placeholder: "Enter username", text: $viewModel.username)
-                CustomTextField(label: "Password", placeholder: "Enter password", text: $viewModel.password, isSecure: true)
+                CustomTextField(label: "Username", placeholder: "Username", text: $viewModel.username)
+                CustomTextField(label: "Password", placeholder: "Password", text: $viewModel.password, isSecure: true)
                 
                 if let errorMessage = viewModel.errorMessage {
                     HStack {

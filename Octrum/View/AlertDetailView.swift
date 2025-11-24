@@ -338,22 +338,31 @@ struct AlertDetailView: View {
         do {
             let (data, _) = try await URLSession.shared.data(from: url)
             
-            let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent("alert_video_\(UUID().uuidString).mp4")
+            let tempURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent("alert_video_\(UUID().uuidString).mp4")
             try data.write(to: tempURL)
             
             try await saveVideoToPhotos(url: tempURL)
             try? FileManager.default.removeItem(at: tempURL)
             
-            downloadMessage = "Video saved to Photos successfully!"
+            downloadMessage = String(
+                localized: "video_saved_success",
+                defaultValue: "Video saved to Photos successfully!"
+            )
             downloadSuccess = true
             showDownloadAlert = true
             
         } catch {
             print("❌ Download error: \(error.localizedDescription)")
-            downloadMessage = "Failed to download video. Please try again."
+            
+            downloadMessage = String(
+                localized: "video_saved_failed",
+                defaultValue: "Failed to download video. Please try again."
+            )
             downloadSuccess = false
             showDownloadAlert = true
         }
+
         
         isDownloading = false
     }
