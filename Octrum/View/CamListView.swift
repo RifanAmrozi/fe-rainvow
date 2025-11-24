@@ -38,41 +38,41 @@ struct CamListView: View {
                     LocationCard(store: userViewModel.store)
                     
                     // ----------------- Camera List -----------------
-                    ScrollView {
-                        HStack {
-                            Text("Integrated CCTV: \(viewModel.totalCameras)")
-                                .font(.system(size: 14, weight: .semibold))
-                                .lineLimit(1)
-                            
-                            Spacer()
-                            
-                            Button(action: {
-                                isAddingCamera = true
-                            }, label: {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "plus")
-                                        .font(.system(size: 12, weight: .semibold))
-                                    Text("Add CCTV")
-                                        .font(.system(size: 12, weight: .semibold))
-                                }
-                                .foregroundColor(.white)
-                                .padding(.vertical, 8)
-                                .padding(.horizontal, 18)
-                                .background(Color.charcoal)
-                                .cornerRadius(5)
-                            })
-                        }
-                        .padding(.horizontal)
-                        .padding(.top)
+                    HStack {
+                        Text("Integrated CCTV: \(viewModel.totalCameras)")
+                            .font(.system(size: 14, weight: .semibold))
+                            .lineLimit(1)
                         
+                        Spacer()
+                        
+                        Button(action: {
+                            isAddingCamera = true
+                        }, label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "plus")
+                                    .font(.system(size: 12, weight: .semibold))
+                                Text("Add CCTV")
+                                    .font(.system(size: 12, weight: .semibold))
+                            }
+                            .foregroundColor(.white)
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 18)
+                            .background(Color.charcoal)
+                            .cornerRadius(5)
+                        })
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 12)
+                    
+                    ScrollView {
                         if viewModel.cameras.isEmpty {
                             DisclaimerCard(
                                 title: viewModel.emptyStateTitle,
                                 message: viewModel.emptyStateMessage
                             )
                             .padding(.horizontal)
-                            .padding(.vertical, 8)
-                            
+                            .padding(.top, 1)
+                            .padding(.bottom, 8)
                         } else {
                             LazyVGrid(columns: columns, spacing: 16) {
                                 ForEach(viewModel.cameras) { camera in
@@ -112,7 +112,8 @@ struct CamListView: View {
                                 }
                             }
                             .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
+                            .padding(.top, 1)
+                            .padding(.bottom, 8)
                         }
                     }
                     .refreshable {

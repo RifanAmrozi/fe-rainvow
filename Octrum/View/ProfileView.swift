@@ -68,11 +68,17 @@ struct ProfileView: View {
                     )
                     
                     CustomTextField(
-                        label: "Position",
+                        label: String(localized: "Role"),
                         placeholder: "Loading...",
-                        text: $position
+                        text: $position,
+                        isDisabled: true,
+                        isEditable: false
                     )
+                    .onChange(of: position) { newValue in
+                        position = newValue.uppercased()
+                    }
                 }
+                .tint(.blue)
                 .padding(.horizontal, 16)
                 
                 Spacer(minLength: 40)
