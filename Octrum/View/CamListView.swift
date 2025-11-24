@@ -12,6 +12,9 @@ struct CamListView: View {
     @ObservedObject private var userViewModel = UserViewModel.shared
     
     @State private var isAddingCamera = false
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+    @State private var isAlertSuccess = false
     
     let columns = [
         GridItem(.flexible(), spacing: 16),
@@ -36,21 +39,58 @@ struct CamListView: View {
                     
                     // ----------------- Camera List -----------------
                     ScrollView {
-                        if (viewModel.cameras.isEmpty) {
+                        HStack {
+                            Text("Integrated CCTV: \(viewModel.totalCameras)")
+                                .font(.system(size: 14, weight: .semibold))
+                                .lineLimit(1)
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                isAddingCamera = true
+                            }, label: {
+                                HStack(spacing: 8) {
+                                    Image(systemName: "plus")
+                                        .font(.system(size: 12, weight: .semibold))
+                                    Text("Add CCTV")
+                                        .font(.system(size: 12, weight: .semibold))
+                                }
+                                .foregroundColor(.white)
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 18)
+                                .background(Color.charcoal)
+                                .cornerRadius(5)
+                            })
+                        }
+                        .padding(.horizontal)
+                        .padding(.top)
+                        
+                        if viewModel.cameras.isEmpty {
                             DisclaimerCard(
                                 title: viewModel.emptyStateTitle,
                                 message: viewModel.emptyStateMessage
                             )
-                            .padding()
+                            .padding(.horizontal)
+                            .padding(.vertical, 8)
                             
                         } else {
                             LazyVGrid(columns: columns, spacing: 16) {
                                 ForEach(viewModel.cameras) { camera in
                                     NavigationLink(destination: CamVideoView(camera: camera)) {
                                         ZStack(alignment: .bottomLeading) {
-                                            RoundedRectangle(cornerRadius: 10)
-                                                .fill(Color.gray.opacity(0.3))
+                                            Image("Isle")
+                                                .resizable()
+                                                .scaledToFill()
                                                 .aspectRatio(1, contentMode: .fit)
+                                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                                                .overlay(
+                                                    LinearGradient(
+                                                        gradient: Gradient(colors: [Color.black.opacity(0.6), Color.black.opacity(0)]),
+                                                        startPoint: .bottom,
+                                                        endPoint: .top
+                                                    )
+                                                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                                                )
                                             
                                             VStack(alignment: .leading, spacing: 4) {
                                                 Text(camera.name)
@@ -72,28 +112,8 @@ struct CamListView: View {
                                 }
                             }
                             .padding(.horizontal, 16)
-                            .padding(.top, 16)
-                            .padding(.bottom, 8)
+                            .padding(.vertical, 8)
                         }
-                        
-                        Button(action: {
-                            isAddingCamera = true
-                        }, label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "plus")
-                                    .font(.system(size: 16, weight: .semibold))
-                                Text("Add CCTV")
-                                    .font(.system(size: 16, weight: .semibold))
-                            }
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .background(Color.charcoal)
-                            .cornerRadius(10)
-                        })
-                        .padding(.horizontal, 16)
-                        .padding(.top, 8)
-                        .padding(.bottom, 80)
                     }
                     .refreshable {
                         await refreshCameras()
@@ -101,11 +121,21 @@ struct CamListView: View {
                 }
                 .background(themeBackground())
                 .sheet(isPresented: $isAddingCamera) {
-                    AddCamView()
+                    AddCamView { success, message in
+                        alertMessage = message
+                        isAlertSuccess = success
+                        showAlert = true
+                    }
+                    .environmentObject(viewModel)
                 }
             }
         }
         .tint(.white)
+        .customAlert(
+            isPresented: $showAlert,
+            message: alertMessage,
+            isSuccess: isAlertSuccess
+        )
         .onAppear {
             userViewModel.fetchDataOnce()
             if viewModel.cameras.isEmpty && !viewModel.isLoading {

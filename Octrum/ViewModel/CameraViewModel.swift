@@ -22,14 +22,25 @@ public class CameraViewModel: ObservableObject {
     }
     
     var emptyStateTitle: String {
-        "The CCTV list might not be available due to:"
+        String(
+            localized: "camview_empty_state_title",
+            defaultValue: "The CCTV list might not be available due to:"
+        )
     }
     
     var emptyStateMessage: String {
+        String(
+            localized: "camview_empty_state_message",
+            defaultValue:
             """
             • Different WiFi network with the CCTV
             • Bad internet connection
             """
+        )
+    }
+    
+    var totalCameras: Int {
+        cameras.count
     }
     
     func fetchCameras() {
@@ -74,10 +85,5 @@ public class CameraViewModel: ObservableObject {
     
     func fetchCamera(id: String) -> AnyPublisher<Camera, Error> {
         return cameraService.fetchCamera(id: id)
-    }
-    
-    func deleteCamera(at offsets: IndexSet) {
-        // cameras.remove(atOffsets: offsets)
-        // TODO: DELETE API (low priority)
     }
 }

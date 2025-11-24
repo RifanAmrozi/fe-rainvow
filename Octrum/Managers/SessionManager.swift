@@ -11,7 +11,7 @@ public class SessionManager: ObservableObject {
     @Published var accessToken: String?
     @Published var userId: String?
     @Published var storeId: String?
-
+    
     private let service = "com.octrum.app"
     private let accessTokenKey = "accessToken"
     private let userIdKey = "userId"
@@ -36,7 +36,7 @@ public class SessionManager: ObservableObject {
         deleteKeychain(key: storeIdKey)
         print("🧹 Cleared keychain on first launch")
     }
-
+    
     func saveSession(token: String, userId: String, storeId: String) {
         DispatchQueue.main.async {
             self.saveKeychain(key: self.accessTokenKey, value: token)
@@ -49,20 +49,28 @@ public class SessionManager: ObservableObject {
             self.isLoggedIn = true
         }
     }
-
+    
     func clearSession() {
         DispatchQueue.main.async {
+            // Clear keychain
             self.deleteKeychain(key: self.accessTokenKey)
             self.deleteKeychain(key: self.userIdKey)
             self.deleteKeychain(key: self.storeIdKey)
             
+            // Clear session properties
             self.accessToken = nil
             self.userId = nil
             self.storeId = nil
             self.isLoggedIn = false
+            
+            // Clear all ViewModels data
+            UserViewModel.shared.clearData()
+            AlertHistoryViewModel.shared.clearData()
+            
+            print("🗑️ Session cleared - all data removed")
         }
     }
-
+    
     // Keychain Helpers
     private func saveKeychain(key: String, value: String) {
         let data = Data(value.utf8)
@@ -79,7 +87,7 @@ public class SessionManager: ObservableObject {
             print("Error saving to keychain: \(status)")
         }
     }
-
+    
     private func getKeychain(key: String) -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -98,7 +106,7 @@ public class SessionManager: ObservableObject {
             return nil
         }
     }
-
+    
     private func deleteKeychain(key: String) {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,

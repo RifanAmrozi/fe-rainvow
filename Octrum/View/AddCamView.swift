@@ -10,20 +10,41 @@ import SwiftUI
 struct AddCamView: View {
     @EnvironmentObject var viewModel: CameraViewModel
     @Environment(\.presentationMode) var presentationMode
+    
+    // Alert callback
+    var onSaveComplete: ((Bool, String) -> Void)?
+    
     @State private var name: String = ""
     @State private var aisleLoc: String = ""
     @State private var rtspUrl: String = ""
     @State private var isLoading: Bool = false
-    @State private var showAlert: Bool = false
-    @State private var alertMessage: String = ""
+    
+    var isValidRtspUrl: Bool {
+        guard !rtspUrl.isEmpty else { return false }
+        
+        let lowercased = rtspUrl.lowercased()
+        guard lowercased.hasPrefix("rtsp://") || lowercased.hasPrefix("rtsps://") else {
+            return false
+        }
+        
+        guard let url = URL(string: rtspUrl) else {
+            return false
+        }
+        
+        guard url.host != nil else {
+            return false
+        }
+        
+        return true
+    }
     
     var body: some View {
         NavigationView {
             VStack(alignment: .leading) {
                 
                 CustomTextField(
-                    label: "CCTV Name",
-                    placeholder: "Cam 01",
+                    label: String(localized: "CCTV Name", defaultValue: "CCTV Name"),
+                    placeholder: "Camera 01",
                     text: $name,
                     isDisabled: isLoading
                 )
@@ -31,8 +52,8 @@ struct AddCamView: View {
                 Spacer().frame(height: 16)
                 
                 CustomTextField(
-                    label: "Location",
-                    placeholder: "Front Gate",
+                    label: String(localized: "Location", defaultValue: "Location"),
+                    placeholder: String(localized: "Front Aisle", defaultValue: "Front Aisle"),
                     text: $aisleLoc,
                     isDisabled: isLoading
                 )
@@ -40,12 +61,19 @@ struct AddCamView: View {
                 Spacer().frame(height: 16)
                 
                 CustomTextField(
-                    label: "RTSP Url",
+                    label: String(localized: "RTSP URL"),
                     placeholder: "rtsp://xx.xx.xx.xx:xxxx/stream",
                     text: $rtspUrl,
                     isDisabled: isLoading,
                     autocapitalization: .never
                 )
+                
+                if !rtspUrl.isEmpty && !isValidRtspUrl {
+                    Text("Invalid RTSP URL format. Must start with rtsp:// or rtsps://")
+                        .font(.system(size: 12))
+                        .foregroundColor(.red)
+                        .padding(.top, 4)
+                }
                 
                 Spacer().frame(height: 32)
                 
@@ -63,11 +91,11 @@ struct AddCamView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
-                    .background(isLoading ? Color.gray : Color.charcoal)
+                    .background(isLoading || !isValidRtspUrl || name.isEmpty || aisleLoc.isEmpty ? Color.gray : Color.charcoal)
                     .foregroundColor(.white)
                     .cornerRadius(10)
                 })
-                .disabled(isLoading || name.isEmpty || aisleLoc.isEmpty || rtspUrl.isEmpty)
+                .disabled(isLoading || name.isEmpty || aisleLoc.isEmpty || rtspUrl.isEmpty || !isValidRtspUrl)
                 
                 Spacer()
             }
@@ -79,15 +107,6 @@ struct AddCamView: View {
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.light, for: .navigationBar)
             .tint(.blue)
-            .alert("Add Camera", isPresented: $showAlert) {
-                Button("OK", role: .cancel) {
-                    if alertMessage.contains("success") {
-                        presentationMode.wrappedValue.dismiss()
-                    }
-                }
-            } message: {
-                Text(alertMessage)
-            }
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
@@ -95,15 +114,25 @@ struct AddCamView: View {
     
     private func saveCamera() {
         isLoading = true
+        let cameraName = name
         
         viewModel.addCamera(name: name, aisleLoc: aisleLoc, rtspUrl: rtspUrl) { success in
             isLoading = false
-            if success {
-                alertMessage = "Camera added successfully!"
-                showAlert = true
-            } else {
-                alertMessage = "Failed to add camera. Please try again."
-                showAlert = true
+            
+            presentationMode.wrappedValue.dismiss()
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                let message: String = success
+                    ? String(
+                        localized: "camera_add_success",
+                        defaultValue: "\"Cam \(cameraName)\" is successfully added!"
+                    )
+                    : String(
+                        localized: "camera_add_failed",
+                        defaultValue: "\"Cam \(cameraName)\" is failed to be added!"
+                    )
+
+                onSaveComplete?(success, message)
             }
         }
     }

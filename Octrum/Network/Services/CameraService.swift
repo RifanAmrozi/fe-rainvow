@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 public class CameraService {
-    @MainActor static let shared = CameraService()
+    static let shared = CameraService()
     
     private let baseURL = NetworkConfig.baseURL
     private var session: SessionManager { SessionManager.shared }

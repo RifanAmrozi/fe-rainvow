@@ -12,32 +12,37 @@ struct Alert: Identifiable, Codable {
     let title: String
     let incidentStart: String
     let isValid: Bool?
+    let photoUrl: String
     let videoUrl: String
     let notes: String?
     let cameraName: String
     let aisleLoc: String
+    let updatedBy: String?
     
     enum CodingKeys: String, CodingKey {
         case id
         case title
         case incidentStart = "incident_start"
         case isValid = "is_valid"
+        case photoUrl = "photo_url"
         case videoUrl = "video_url"
         case notes
         case cameraName = "camera_name"
         case aisleLoc = "aisle_loc"
+        case updatedBy = "updated_by"
     }
     
     var formattedTimestamp: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
         formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone.current
+        formatter.timeZone = TimeZone(identifier: "UTC")
         
         if let date = formatter.date(from: incidentStart) {
             let displayFormatter = DateFormatter()
             displayFormatter.dateFormat = "HH:mm:ss - EEE dd/MM/yyyy"
             displayFormatter.locale = Locale(identifier: "en_US_POSIX")
+            displayFormatter.timeZone = TimeZone.current
             return displayFormatter.string(from: date)
         }
         return incidentStart
@@ -49,36 +54,41 @@ struct AlertDetailResponse: Identifiable, Codable, Equatable {
     let title: String
     let incidentStart: String
     let isValid: Bool?
+    let photoUrl: String
     let videoUrl: String
     let notes: String?
     let storeId: String
     let cameraId: String
     let cameraName: String
     let aisleLoc: String
+    let updatedBy: String?
     
     enum CodingKeys: String, CodingKey {
         case id
         case title
         case incidentStart = "incident_start"
         case isValid = "is_valid"
+        case photoUrl = "photo_url"
         case videoUrl = "video_url"
         case notes
         case storeId = "store_id"
         case cameraId = "camera_id"
         case cameraName = "camera_name"
         case aisleLoc = "aisle_loc"
+        case updatedBy = "updated_by"
     }
     
     var formattedTimestamp: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
         formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone.current
+        formatter.timeZone = TimeZone(identifier: "UTC") // Parse dari UTC (waktu server)
         
         if let date = formatter.date(from: incidentStart) {
             let displayFormatter = DateFormatter()
             displayFormatter.dateFormat = "HH:mm:ss - EEE dd/MM/yyyy"
             displayFormatter.locale = Locale(identifier: "en_US_POSIX")
+            displayFormatter.timeZone = TimeZone.current // Convert ke timezone lokal device
             return displayFormatter.string(from: date)
         }
         return incidentStart

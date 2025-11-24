@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct AlertHistoryCard: View {
     let alert: Alert
     
     var body: some View {
-        NavigationLink(destination: AlertDetailView(alertId: alert.id)) {
+        NavigationLink(destination: AlertDetailView(alertId: alert.id, alert: alert)) {
             cardContent
         }
         .buttonStyle(PlainButtonStyle())
@@ -22,35 +23,39 @@ struct AlertHistoryCard: View {
             Rectangle()
                 .fill(Color.gray.opacity(0.3))
                 .frame(width: 100, height: 68)
-                .cornerRadius(10)
                 .overlay(
-                    Image(systemName: "photo")
-                        .foregroundColor(.gray)
-                        .font(.system(size: 28))
+                    KFImage(URL(string: alert.photoUrl))
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 100, height: 68)
+                        .clipped()
                 )
+                .clipShape(RoundedRectangle(cornerRadius: 10))
             
             VStack(alignment: .leading, spacing: 2) {
-                HStack(spacing: 4) {
-                    Image(systemName: "camera.fill")
-                    Text("\(alert.cameraName) - Aisle \(alert.aisleLoc)")
-                }
-                .font(.system(size: 12, weight: .regular))
-                .foregroundColor(Color.gray)
                 
-                Text(alert.title)
+                Text("\(alert.cameraName) - \(alert.aisleLoc)")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.black)
-                    .lineLimit(2)
+                    .foregroundColor(Color.black)
                 
                 Text(alert.formattedTimestamp)
                     .font(.system(size: 12, weight: .regular))
-                    .foregroundColor(.gray)
-                                
-                Text("Confirmed by user")
-                    .font(.system(size: 12))
-                    .foregroundColor(.gray.opacity(0.8))
+                    .foregroundColor(.black.opacity(0.5))
+                                     
+                Spacer()
+                
+                if alert.isValid==true {
+                    Text("Confirmed by \(alert.updatedBy ?? "Unknown").")
+                        .font(.system(size: 12))
+                        .foregroundColor(.black.opacity(0.5))
+                } else if  alert.isValid==false {
+                    Text("Ignored by \(alert.updatedBy ?? "Unknown").")
+                        .font(.system(size: 12))
+                        .foregroundColor(.black.opacity(0.5))
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: 68, alignment: .leading)
+            .padding(.vertical, 2)
         }
         .padding(12)
         .background(Color.white)
@@ -66,9 +71,11 @@ struct AlertHistoryCard: View {
         title: "Suspicious Behaviour",
         incidentStart: "2025-11-04T05:22:46.938570",
         isValid: nil,
+        photoUrl: "https://example.com/photo.jpg",
         videoUrl: "shoplifting_track5_20251104_122246",
         notes: nil,
         cameraName: "Cam 01",
-        aisleLoc: "Aisle 1"
+        aisleLoc: "Aisle 1",
+        updatedBy: "ferdy"
     ))
 }

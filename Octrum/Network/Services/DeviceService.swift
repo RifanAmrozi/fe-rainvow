@@ -7,7 +7,7 @@
 
 import Foundation
 
-class DeviceService {
+public class DeviceService {
     private let baseURL = NetworkConfig.baseURL
     private let session = SessionManager.shared
     

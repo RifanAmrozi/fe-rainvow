@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 
+@MainActor
 public class AuthViewModel: ObservableObject {
     @Published var username = ""
     @Published var password = ""
