@@ -75,7 +75,7 @@ struct AddCamView: View {
                         .padding(.top, 4)
                 }
                 
-                Spacer().frame(height: 32)
+                Spacer()
                 
                 Button(action: {
                     saveCamera()
@@ -95,9 +95,9 @@ struct AddCamView: View {
                     .foregroundColor(.white)
                     .cornerRadius(10)
                 })
+                .padding(.bottom, 12)
                 .disabled(isLoading || name.isEmpty || aisleLoc.isEmpty || rtspUrl.isEmpty || !isValidRtspUrl)
                 
-                Spacer()
             }
             .padding(.top, 16)
             .padding(.horizontal, 16)
