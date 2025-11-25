@@ -20,6 +20,7 @@ struct CustomTextField: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(label)
                 .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(.black)
             
             Spacer().frame(height: 4)
             
@@ -27,10 +28,12 @@ struct CustomTextField: View {
                 if isSecure {
                     SecureField(placeholder, text: $text)
                         .disabled(isDisabled || !isEditable)
+                        .foregroundColor(.gray)
                 } else {
                     TextField(placeholder, text: $text)
                         .textInputAutocapitalization(autocapitalization)
                         .disabled(isDisabled || !isEditable)
+                        .foregroundColor(.gray)
                 }
                 
                 // Show lock icon when field is disabled or not editable

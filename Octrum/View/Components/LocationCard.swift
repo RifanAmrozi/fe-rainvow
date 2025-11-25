@@ -19,6 +19,7 @@ struct LocationCard: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(store?.storeName ?? "")
                     .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.black)
                     .lineLimit(1)
                 Text(store?.storeAddress ?? "")
                     .font(.system(size: 12, weight: .regular))

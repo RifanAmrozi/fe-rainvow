@@ -44,6 +44,7 @@ struct CamListView: View {
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Integrated CCTV: \(viewModel.totalCameras)")
                                 .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.black)
                                 .lineLimit(1)
                             
                             let filterLocation = viewModel.filteredAisleLocation ?? "All Locations"

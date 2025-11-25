@@ -149,6 +149,7 @@ struct CamVideoView: View {
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
+            .foregroundColor(.black)
             .background(.white)
             .cornerRadius(10)
             .overlay(RoundedRectangle(cornerRadius: 10)

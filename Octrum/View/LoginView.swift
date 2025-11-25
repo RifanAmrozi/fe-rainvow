@@ -45,6 +45,7 @@ struct LoginView: View {
                     
                     Text("I agree to all the terms and privacy policy.")
                         .font(.footnote)
+                        .foregroundColor(.black)
                         .multilineTextAlignment(.leading)
                     
                     Spacer()
