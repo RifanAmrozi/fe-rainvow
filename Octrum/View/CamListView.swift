@@ -18,13 +18,14 @@ struct CamListView: View {
     @State private var alertMessage = ""
     @State private var isAlertSuccess = false
     
-    let columns = [
-        GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16)
-    ]
+    // Dynamic columns based on device type
+    var columns: [GridItem] {
+        let columnCount = UIDevice.current.userInterfaceIdiom == .pad ? 5 : 2
+        return Array(repeating: GridItem(.flexible(), spacing: 16), count: columnCount)
+    }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack(alignment: .top) {
                 GeometryReader { geo in
                     Color.charcoal

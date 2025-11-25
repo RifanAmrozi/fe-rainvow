@@ -23,7 +23,7 @@ struct FilterCamView: View {
                     HStack {
                         Text("CCTV Location")
                             .font(.system(size: 14, weight: .medium))
-                            .foregroundColor(.primary)
+                            .foregroundColor(.black)
                         
                         Spacer()
                         
@@ -150,6 +150,7 @@ struct FilterCamView: View {
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.light, for: .navigationBar)
             .tint(.blue)
+            .background(.white)
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)

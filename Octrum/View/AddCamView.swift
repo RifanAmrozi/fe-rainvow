@@ -107,6 +107,7 @@ struct AddCamView: View {
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.light, for: .navigationBar)
             .tint(.blue)
+            .background(.white)
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
