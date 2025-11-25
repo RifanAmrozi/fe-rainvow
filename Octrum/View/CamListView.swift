@@ -20,7 +20,7 @@ struct CamListView: View {
     
     // Dynamic columns based on device type
     var columns: [GridItem] {
-        let columnCount = UIDevice.current.userInterfaceIdiom == .pad ? 5 : 2
+        let columnCount = UIDevice.current.userInterfaceIdiom == .pad ? 3 : 2
         return Array(repeating: GridItem(.flexible(), spacing: 16), count: columnCount)
     }
     

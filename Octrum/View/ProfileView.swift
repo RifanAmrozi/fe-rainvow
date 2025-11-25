@@ -34,15 +34,15 @@ struct ProfileView: View {
             
             VStack {
                 HStack {}
-                .frame(maxWidth: .infinity, maxHeight: 12)
-                .background(.charcoal)
-                .padding(.bottom, -8)
-                    
+                    .frame(maxWidth: .infinity, maxHeight: 12)
+                    .background(.charcoal)
+                    .padding(.bottom, -8)
+                
                 ZStack {
                     Circle()
                         .foregroundColor(.charcoal)
                         .frame(width: 100, height: 100)
-                        
+                    
                     Image(systemName: "person.circle.fill")
                         .resizable()
                         .frame(width: 100, height: 100)
@@ -89,28 +89,28 @@ struct ProfileView: View {
                     }, label: {
                         Text("Save")
                             .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color.charcoal)
+                            .cornerRadius(10)
                     })
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(Color.charcoal)
-                    .cornerRadius(10)
                     
                     Button(action: {
                         session.clearSession()
                     }, label: {
                         Text("Logout")
                             .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.red)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 12)
+                            .background(Color.red.opacity(0.1))
+                            .cornerRadius(10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.red, lineWidth: 1)
+                            )
                     })
-                    .foregroundColor(.red)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(Color.red.opacity(0.1))
-                    .cornerRadius(10)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.red, lineWidth: 1)
-                    )
                 }
                 .padding(16)
             }

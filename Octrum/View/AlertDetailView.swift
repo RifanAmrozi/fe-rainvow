@@ -138,7 +138,7 @@ struct AlertDetailView: View {
                     }
                     
                     // Fullscreen button overlay
-                    if player != nil {
+                    if player != nil && UIDevice.current.userInterfaceIdiom == .phone {
                         Button(action: {
                             player?.pause() // Pause current player
                             showFullscreenVideo = true

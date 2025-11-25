@@ -43,7 +43,7 @@ struct AlertCard: View {
                     .foregroundColor(.red)
                 
                 Text("ACTIVITY DETECTED!")
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.red)
             }
             
@@ -113,39 +113,40 @@ struct AlertCard: View {
     }
     
     private func dropdownPhoto() -> some View {
-        VStack {
-            HStack {
-                Image(systemName: "photo")
-                    .font(.system(size: 14))
-                    .foregroundColor(.black)
-                Text("Review suspect")
-                    .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.black)
-                Spacer()
-                Button(action: {
-                    isShowPerson.toggle()
-                }, label: {
+        Button(action: {
+            isShowPerson.toggle()
+        }, label: {
+            VStack {
+                HStack {
+                    Image(systemName: "photo")
+                        .font(.system(size: 14))
+                        .foregroundColor(.black)
+                    Text("Review suspect")
+                        .font(.system(size: 14, weight: .regular))
+                        .foregroundColor(.black)
+                    Spacer()
                     Image(systemName: "chevron.right")
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
                         .rotationEffect(isShowPerson == true ? .degrees(90) : .degrees(0))
-                })
+                }
+                
+                if isShowPerson {
+                    KFImage(URL(string: alert.photoUrl))
+                        .resizable()
+                        .fade(duration: 0.3)
+                        .placeholder {
+                            ProgressView().tint(.white)
+                        }
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .scaledToFit()
+                }
             }
-            
-            if isShowPerson {
-                KFImage(URL(string: alert.photoUrl))
-                    .resizable()
-                    .fade(duration: 0.3)
-                    .placeholder {
-                        ProgressView().tint(.white)
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-            }
-        }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 16)
-        .overlay(RoundedRectangle(cornerRadius: 10)
-            .stroke(Color.gray.opacity(0.3), lineWidth: 1))
+            .padding(.vertical, 8)
+            .padding(.horizontal, 16)
+            .overlay(RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.gray.opacity(0.3), lineWidth: 1))
+        })
     }
     
     private func actionButton() -> some View {

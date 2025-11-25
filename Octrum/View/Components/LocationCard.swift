@@ -12,9 +12,10 @@ struct LocationCard: View {
     
     var body: some View {
         HStack {
-            Image(systemName: "storefront.fill")
-                .font(.system(size: 20))
-                .foregroundColor(Color.blue)
+            Image("StoreIcon")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 25, height: 25)
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(store?.storeName ?? "")

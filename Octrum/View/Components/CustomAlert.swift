@@ -23,7 +23,7 @@ struct CustomAlert: View {
                 
                 Text(message)
                     .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.primary)
+                    .foregroundColor(.black)
                     .lineLimit(2)
                 
                 Spacer()
@@ -31,14 +31,14 @@ struct CustomAlert: View {
                 Button(action: onDismiss) {
                     Image(systemName: "xmark")
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.primary)
+                        .foregroundColor(.black)
                 }
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(Color(UIColor.systemBackground))
+                    .fill(Color.white)
                     .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: -2)
             )
             .padding(16)

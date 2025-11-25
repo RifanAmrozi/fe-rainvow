@@ -86,7 +86,7 @@ struct CamVideoView: View {
                         
                         Spacer()
                         
-                        if webRTCManager.isConnected {
+                        if webRTCManager.isConnected && UIDevice.current.userInterfaceIdiom == .phone {
                             Button(action: {
                                 isFullscreen = true
                             }, label: {
