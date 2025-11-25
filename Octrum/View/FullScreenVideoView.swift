@@ -65,53 +65,67 @@ struct FullScreenVideoView: View {
             // Controls Overlay
             if showControls {
                 VStack {
-                    // Top Controls
                     HStack {
-                        // Close Button
-                        Button(action: {
-                            isPresented = false
-                        }, label: {
-                            Image(systemName: "xmark")
-                                .font(.system(size: 20, weight: .bold))
-                                .foregroundColor(.white)
-                                .padding(12)
-                                .background(Color.black.opacity(0.6))
-                                .clipShape(Circle())
-                        })
+                        // Indicators
+                        StatusIndicator(
+                            isConnected: webRTCManager.isConnected,
+                            isConnecting: webRTCManager.isConnecting
+                        )
                         
                         Spacer()
                         
                         // Camera Title
-                        VStack(alignment: .trailing) {
-                            Text(camera.name)
+                        VStack {
+                            Text("CCTV: \(camera.name)")
                                 .font(.headline)
                                 .foregroundColor(.white)
-                            Text(camera.aisleLoc)
+                            Text("Location: \(camera.aisleLoc)")
                                 .font(.subheadline)
-                                .foregroundColor(.gray)
+                                .foregroundColor(.white)
                         }
                         
                         Spacer()
                         
                         // Status and Refresh
-                        HStack(spacing: 12) {
-                            StatusIndicator(
-                                isConnected: webRTCManager.isConnected,
-                                isConnecting: webRTCManager.isConnecting
-                            )
-                            
+                        HStack(spacing: 8) {
                             if webRTCManager.isConnected {
                                 Button(action: {
                                     refreshVideoTrack()
                                 }, label: {
                                     Image(systemName: "arrow.clockwise")
-                                        .font(.system(size: 18, weight: .semibold))
+                                        .font(.system(size: 16, weight: .semibold))
                                         .foregroundColor(.white)
-                                        .padding(12)
-                                        .background(Color.black.opacity(0.6))
+                                        .padding(8)
+                                        .background(Color.black.opacity(0.4))
                                         .clipShape(Circle())
+                                        .overlay(Circle().stroke(Color.white, lineWidth: 1))
                                 })
                             }
+                            
+                            Button(action: {
+                                // Force rotate back to portrait before dismiss
+                                AppDelegate.orientationLock = .portrait
+                                
+                                if #available(iOS 16.0, *) {
+                                    guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else {
+                                        isPresented = false
+                                        return
+                                    }
+                                    windowScene.requestGeometryUpdate(.iOS(interfaceOrientations: .portrait))
+                                } else {
+                                    UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+                                }
+                                
+                                isPresented = false
+                            }, label: {
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(Color.black.opacity(0.4))
+                                    .clipShape(Circle())
+                                    .overlay(Circle().stroke(Color.white, lineWidth: 1))
+                            })
                         }
                     }
                     .padding()
@@ -126,33 +140,6 @@ struct FullScreenVideoView: View {
                     )
                     
                     Spacer()
-                    
-                    // Bottom Controls
-                    HStack {
-                        Spacer()
-                        
-                        // Minimize/Exit Fullscreen Button
-                        Button(action: {
-                            isPresented = false
-                        }, label: {
-                            Image(systemName: "arrow.down.right.and.arrow.up.left")
-                                .font(.system(size: 18, weight: .semibold))
-                                .foregroundColor(.white)
-                                .padding(12)
-                                .background(Color.black.opacity(0.6))
-                                .clipShape(Circle())
-                        })
-                    }
-                    .padding()
-                    .background(
-                        LinearGradient(
-                            colors: [Color.clear, Color.black.opacity(0.8)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                        .frame(height: 120)
-                        .ignoresSafeArea(.container, edges: .bottom)
-                    )
                 }
                 .transition(.opacity.animation(.easeInOut(duration: 0.3)))
             }
@@ -163,6 +150,29 @@ struct FullScreenVideoView: View {
         .onAppear {
             // Hide controls after 3 seconds initially
             resetControlsTimer()
+            
+            // Lock to landscape when this view appears
+            AppDelegate.orientationLock = .landscape
+            
+            // Force rotate to landscape
+            if #available(iOS 16.0, *) {
+                guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+                windowScene.requestGeometryUpdate(.iOS(interfaceOrientations: .landscape))
+            } else {
+                UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
+            }
+        }
+        .onDisappear {
+            // Return to portrait when dismissed
+            AppDelegate.orientationLock = .portrait
+            
+            // Force rotate back to portrait
+            if #available(iOS 16.0, *) {
+                guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+                windowScene.requestGeometryUpdate(.iOS(interfaceOrientations: .portrait))
+            } else {
+                UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+            }
         }
         .statusBarHidden(!showControls)
         .preferredColorScheme(.dark)

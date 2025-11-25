@@ -88,18 +88,19 @@ struct CamVideoView: View {
                         
                         if webRTCManager.isConnected {
                             Button(action: {
-                                refreshVideoTrack()
+                                isFullscreen = true
                             }, label: {
-                                Image(systemName: "arrow.clockwise")
-                                    .font(.system(size: 16, weight: .semibold))
+                                Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                    .font(.system(size: 10, weight: .semibold))
                                     .foregroundColor(.white)
-                                    .padding(8)
-                                    .background(Color.black.opacity(0.6))
+                                    .padding(4)
+                                    .background(Color.black.opacity(0.4))
                                     .clipShape(Circle())
+                                    .overlay(Circle().stroke(Color.white, lineWidth: 1))
                             })
                         }
                     }
-                    .padding()
+                    .padding(10)
                     
                     Spacer()
                     
@@ -108,18 +109,19 @@ struct CamVideoView: View {
                         
                         if webRTCManager.isConnected {
                             Button(action: {
-                                isFullscreen = true
+                                refreshVideoTrack()
                             }, label: {
-                                Image(systemName: "arrow.up.left.and.arrow.down.right")
-                                    .font(.system(size: 16, weight: .semibold))
+                                Image(systemName: "arrow.clockwise")
+                                    .font(.system(size: 10, weight: .semibold))
                                     .foregroundColor(.white)
-                                    .padding(8)
-                                    .background(Color.black.opacity(0.6))
+                                    .padding(4)
+                                    .background(Color.black.opacity(0.4))
                                     .clipShape(Circle())
+                                    .overlay(Circle().stroke(Color.white, lineWidth: 1))
                             })
                         }
                     }
-                    .padding()
+                    .padding(10)
                 }
             }
             .background(.black)
