@@ -175,6 +175,7 @@ struct AlertDetailView: View {
                             ProgressView().tint(.black)
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .scaledToFit()
                 }
                 .padding(16)
                 .overlay(RoundedRectangle(cornerRadius: 10)

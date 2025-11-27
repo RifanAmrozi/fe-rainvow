@@ -102,6 +102,15 @@ class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterD
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
         print("📱 User tapped notification: \(response.notification.request.content.title)")
+        
+        // Post notification to switch to Alerts tab
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(
+                name: NSNotification.Name("SwitchToAlertsTab"),
+                object: nil
+            )
+        }
+        
         completionHandler()
     }
     
