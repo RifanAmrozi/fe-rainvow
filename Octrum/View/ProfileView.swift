@@ -78,7 +78,7 @@ struct ProfileView: View {
                         position = newValue.uppercased()
                     }
                 }
-                .tint(.blue)
+                .tint(.solidBlue)
                 .padding(.horizontal, 16)
                 
                 Spacer(minLength: 40)
@@ -101,14 +101,14 @@ struct ProfileView: View {
                     }, label: {
                         Text("Logout")
                             .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.red)
+                            .foregroundColor(.flashyRed)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
-                            .background(Color.red.opacity(0.1))
+                            .background(Color.red.opacity(0.05))
                             .cornerRadius(10)
-                            .overlay(
+                            .background(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .stroke(Color.red, lineWidth: 1)
+                                    .stroke(Color.flashyRed, lineWidth: 0.8)
                             )
                     })
                 }

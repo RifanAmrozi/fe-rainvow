@@ -28,7 +28,7 @@ struct LoginView: View {
                 if let errorMessage = viewModel.errorMessage {
                     HStack {
                         Text(errorMessage)
-                            .foregroundColor(.red)
+                            .foregroundColor(.flashyRed)
                             .font(.caption)
                         Spacer()
                     }
@@ -39,7 +39,7 @@ struct LoginView: View {
                         isTermsAccepted.toggle()
                     }, label: {
                         Image(systemName: isTermsAccepted ? "record.circle" : "circle")
-                            .foregroundColor(.blue)
+                            .foregroundColor(.solidBlue)
                             .font(.system(size: 18))
                     })
                     

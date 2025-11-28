@@ -52,7 +52,7 @@ struct MainView: View {
                     }
                     .tag(2)
             }
-            .tint(.blue)
+            .tint(.solidBlue)
             .onAppear {
                 alertViewModel.fetchAlerts()
                 setupNotificationObserver()

@@ -292,13 +292,13 @@ struct AlertDetailView: View {
                 }, label: {
                     Text(currentStatus == false ? "Ignored" : "Ignore")
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(viewModel.isProcessing || currentStatus == false ? Color.gray : .red)
+                        .foregroundColor(viewModel.isProcessing || currentStatus == false ? Color.gray : Color.flashyRed)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                         .background(viewModel.isProcessing || currentStatus == false ? Color.gray.opacity(0.1) : Color.red.opacity(0.05))
                         .background(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(viewModel.isProcessing || currentStatus == false ? Color.gray : Color.red, lineWidth: 0.8)
+                                .stroke(viewModel.isProcessing || currentStatus == false ? Color.gray : Color.flashyRed, lineWidth: 0.8)
                         )
                 })
                 .disabled(viewModel.isProcessing || currentStatus == false)

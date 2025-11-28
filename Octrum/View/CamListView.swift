@@ -56,7 +56,7 @@ struct CamListView: View {
                             .foregroundColor(.white)
                             .padding(.vertical, 4)
                             .padding(.horizontal, 8)
-                            .background(Color.blue)
+                            .background(Color.solidBlue)
                             .cornerRadius(12)
                         }
                         
@@ -102,7 +102,7 @@ struct CamListView: View {
                                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                                                 .overlay(
                                                     LinearGradient(
-                                                        gradient: Gradient(colors: [Color.black.opacity(0.6), Color.black.opacity(0)]),
+                                                        gradient: Gradient(colors: [Color.black.opacity(1), Color.black.opacity(0.7),Color.black.opacity(0.1)]),
                                                         startPoint: .bottom,
                                                         endPoint: .top
                                                     )
@@ -191,11 +191,11 @@ struct CamListView: View {
                     .font(.system(size: 12, weight: .regular))
                     .padding(.vertical, 4)
                     .padding(.horizontal, 6)
-                    .background(Color.blue.opacity(0.5))
+                    .background(Color.solidBlue.opacity(0.5))
                     .cornerRadius(4)
                     .overlay(
                         RoundedRectangle(cornerRadius: 4)
-                            .stroke(Color.blue, lineWidth: 1)
+                            .stroke(Color.solidBlue, lineWidth: 1)
                     )
             }
             

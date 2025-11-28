@@ -19,7 +19,7 @@ struct CustomAlert: View {
             HStack(spacing: 16) {
                 Image(systemName: isSuccess ? "checkmark.circle.fill" : "xmark.circle.fill")
                     .font(.system(size: 22))
-                    .foregroundColor(isSuccess ? .green : .red)
+                    .foregroundColor(isSuccess ? .green : .flashyRed)
                 
                 Text(message)
                     .font(.system(size: 14, weight: .regular))

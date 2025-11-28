@@ -24,39 +24,46 @@ struct CustomTextField: View {
             
             Spacer().frame(height: 4)
             
-            HStack {
-                if isSecure {
-                    SecureField(placeholder, text: $text)
-                        .disabled(isDisabled || !isEditable)
-                        .foregroundColor(.gray)
-                } else {
-                    TextField(placeholder, text: $text)
-                        .textInputAutocapitalization(autocapitalization)
-                        .disabled(isDisabled || !isEditable)
-                        .foregroundColor(.gray)
+            ZStack(alignment: .leading) {
+                if text.isEmpty {
+                    Text(placeholder)
+                        .foregroundColor(.darkGray)
+                        .padding(.leading, 8)
                 }
                 
-                // Show lock icon when field is disabled or not editable
-                if isDisabled || !isEditable {
-                    Image(systemName: "lock.fill")
-                        .foregroundColor(.gray)
-                        .font(.system(size: 14))
-                        .padding(.trailing, 4)
+                HStack {
+                    if isSecure {
+                        SecureField("", text: $text)
+                            .disabled(isDisabled || !isEditable)
+                            .foregroundColor(.black)
+                    } else {
+                        TextField("", text: $text)
+                            .textInputAutocapitalization(autocapitalization)
+                            .disabled(isDisabled || !isEditable)
+                            .foregroundColor(.black)
+                    }
+                    
+                    if isDisabled || !isEditable {
+                        Image(systemName: "lock.fill")
+                            .foregroundColor(.gray)
+                            .font(.system(size: 14))
+                            .padding(.trailing, 4)
+                    }
                 }
+                .padding(8)
             }
-            .padding(8)
             .background(
-                (isDisabled || !isEditable) 
-                    ? Color.gray.opacity(0.15)
-                    : Color.gray.opacity(0.1)
+                (isDisabled || !isEditable)
+                ? Color.gray.opacity(0.15)
+                : Color.gray.opacity(0.1)
             )
             .cornerRadius(10)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
                     .stroke(
                         (isDisabled || !isEditable)
-                            ? Color.gray.opacity(0.6)
-                            : Color.gray.opacity(0.4),
+                        ? Color.gray.opacity(0.6)
+                        : Color.gray.opacity(0.4),
                         lineWidth: 1
                     )
             )

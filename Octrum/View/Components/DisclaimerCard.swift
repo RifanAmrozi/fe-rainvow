@@ -14,7 +14,7 @@ struct DisclaimerCard: View {
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: "info.circle")
-                .foregroundColor(.blue)
+                .foregroundColor(.solidBlue)
                 
             VStack(alignment: .leading, spacing: 6) {
                 Text(title)
@@ -23,15 +23,15 @@ struct DisclaimerCard: View {
                 Text(message)
                     .font(.system(size: 14, weight: .regular))
             }
-            .foregroundColor(.blue)
+            .foregroundColor(.solidBlue)
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.blue.opacity(0.05))
+        .background(Color.lightBlue)
         .cornerRadius(10)
         .overlay(
             RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.blue, lineWidth: 1)
+                .stroke(Color.solidBlue, lineWidth: 1)
         )
         
     }

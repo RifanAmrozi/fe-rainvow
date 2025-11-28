@@ -24,7 +24,7 @@ struct LocationCard: View {
                     .lineLimit(1)
                 Text(store?.storeAddress ?? "")
                     .font(.system(size: 12, weight: .regular))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.darkGray)
                     .lineLimit(1)
             }
             

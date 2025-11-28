@@ -40,22 +40,22 @@ struct AlertCard: View {
         VStack(alignment: .leading, spacing: 2) {
             HStack {
                 Image(systemName: "exclamationmark.triangle.fill")
-                    .foregroundColor(.red)
+                    .foregroundColor(.flashyRed)
                 
                 Text("ACTIVITY DETECTED!")
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.red)
+                    .foregroundColor(.flashyRed)
             }
             
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
                     Text(alert.cameraName)
-                        .font(.system(size: 32, weight: .bold))
+                        .font(.title)
                         .foregroundColor(.black)
                     
                     Text("•")
                         .font(.system(size: 32, weight: .bold))
-                        .foregroundColor(.gray.opacity(0.5))
+                        .foregroundColor(.darkGray)
                     
                     Text(alert.aisleLoc)
                         .font(.system(size: 32, weight: .regular))
@@ -173,13 +173,13 @@ struct AlertCard: View {
                     Text(currentStatus == false ? "Ignored" : "Ignore")
                         .padding(.vertical, 12)
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(isProcessing || currentStatus == false ? Color.gray : Color.red)
+                        .foregroundColor(isProcessing || currentStatus == false ? Color.gray : Color.flashyRed)
                         .frame(maxWidth: .infinity)
                         .cornerRadius(10)
                         .background(isProcessing || currentStatus == false ? Color.gray.opacity(0.1) : Color.red.opacity(0.05))
                         .background(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(isProcessing || currentStatus == false ? Color.gray : Color.red, lineWidth: 0.8)
+                                .stroke(isProcessing || currentStatus == false ? Color.gray : Color.flashyRed, lineWidth: 0.8)
                         )
                 })
                 .disabled(isProcessing || currentStatus == false)

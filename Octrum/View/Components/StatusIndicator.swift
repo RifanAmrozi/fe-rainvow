@@ -24,7 +24,7 @@ struct StatusIndicator: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
         .foregroundStyle(Color.white)
-        .background(isConnected||isConnecting ? Color.blue : Color.gray)
+        .background(isConnected||isConnecting ? Color.solidBlue : Color.gray)
         .cornerRadius(5)
     }
 }

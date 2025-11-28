@@ -15,6 +15,62 @@ struct FilterCamView: View {
     var currentFilter: String? = nil
     var onFilterApply: ((String?) -> Void)?
     
+    private var menuView: some View {
+        Menu {
+            Button(action: {
+                viewModel.selectedAisleLocation = nil
+            }, label: {
+                HStack {
+                    Text("All Locations")
+                    if viewModel.selectedAisleLocation == nil {
+                        Spacer()
+                        Image(systemName: "checkmark")
+                    }
+                }
+            })
+            
+            Divider()
+            
+            ForEach(viewModel.aisleLocations, id: \.self) { location in
+                Button(action: {
+                    viewModel.selectedAisleLocation = location
+                }, label: {
+                    HStack {
+                        Text(location)
+                        if viewModel.selectedAisleLocation == location {
+                            Spacer()
+                            Image(systemName: "checkmark")
+                        }
+                    }
+                })
+            }
+        } label: {
+            menuLabel
+        }
+        .preferredColorScheme(.light)
+    }
+    
+    private var menuLabel: some View {
+        HStack {
+            Text(viewModel.selectedAisleLocation ?? "Select location...")
+                .foregroundColor(viewModel.selectedAisleLocation == nil ? .darkGray : .black)
+                .font(.system(size: 16))
+            
+            Spacer()
+            
+            Image(systemName: "chevron.down")
+                .foregroundColor(.gray)
+                .font(.system(size: 14))
+        }
+        .padding(12)
+        .background(Color.gray.opacity(0.1))
+        .cornerRadius(10)
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(Color.gray.opacity(0.4), lineWidth: 1)
+        )
+    }
+    
     var body: some View {
         NavigationView {
             VStack(alignment: .leading, spacing: 0) {
@@ -34,7 +90,7 @@ struct FilterCamView: View {
                             }, label: {
                                 Text("Reset Filter")
                                     .font(.system(size: 14, weight: .regular))
-                                    .foregroundColor(.red)
+                                    .foregroundColor(.flashyRed)
                             })
                         }
                     }
@@ -46,7 +102,7 @@ struct FilterCamView: View {
                                 .tint(.black)
                             Text("Loading locations...")
                                 .font(.system(size: 14))
-                                .foregroundColor(.gray)
+                                .foregroundColor(.darkGray)
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(12)
@@ -59,7 +115,7 @@ struct FilterCamView: View {
                     } else if viewModel.aisleLocations.isEmpty {
                         Text("No locations available")
                             .font(.system(size: 14))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.darkGray)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(12)
                             .background(Color.gray.opacity(0.1))
@@ -69,60 +125,13 @@ struct FilterCamView: View {
                                     .stroke(Color.gray.opacity(0.4), lineWidth: 1)
                             )
                     } else {
-                        Menu {
-                            Button(action: {
-                                viewModel.selectedAisleLocation = nil
-                            }, label: {
-                                HStack {
-                                    Text("All Locations")
-                                    if viewModel.selectedAisleLocation == nil {
-                                        Spacer()
-                                        Image(systemName: "checkmark")
-                                    }
-                                }
-                            })
-                            
-                            Divider()
-                            
-                            ForEach(viewModel.aisleLocations, id: \.self) { location in
-                                Button(action: {
-                                    viewModel.selectedAisleLocation = location
-                                }, label: {
-                                    HStack {
-                                        Text(location)
-                                        if viewModel.selectedAisleLocation == location {
-                                            Spacer()
-                                            Image(systemName: "checkmark")
-                                        }
-                                    }
-                                })
-                            }
-                        } label: {
-                            HStack {
-                                Text(viewModel.selectedAisleLocation ?? "Select location...")
-                                    .foregroundColor(viewModel.selectedAisleLocation == nil ? .gray : .primary)
-                                    .font(.system(size: 16))
-                                
-                                Spacer()
-                                
-                                Image(systemName: "chevron.down")
-                                    .foregroundColor(.gray)
-                                    .font(.system(size: 14))
-                            }
-                            .padding(12)
-                            .background(Color.gray.opacity(0.1))
-                            .cornerRadius(10)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .stroke(Color.gray.opacity(0.4), lineWidth: 1)
-                            )
-                        }
+                        menuView
                     }
                     
                     if let errorMessage = viewModel.errorMessage {
                         Text(errorMessage)
                             .font(.system(size: 12))
-                            .foregroundColor(.red)
+                            .foregroundColor(.flashyRed)
                             .padding(.top, 4)
                     }
                 }
@@ -149,7 +158,7 @@ struct FilterCamView: View {
             .toolbarBackground(Color.white, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.light, for: .navigationBar)
-            .tint(.blue)
+            .tint(.solidBlue)
             .background(.white)
         }
         .presentationDetents([.medium, .large])
