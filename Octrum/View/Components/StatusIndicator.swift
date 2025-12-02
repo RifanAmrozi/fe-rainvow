@@ -13,9 +13,9 @@ struct StatusIndicator: View {
     
     var body: some View {
         HStack(spacing: 6) {
-            Circle()
-                .fill(isConnected ? Color.green : (isConnecting ? Color.orange : Color.red))
-                .frame(width: 8, height: 8)
+            Image(systemName: isConnected ? "wifi" : (isConnecting ? "circle.dashed" : "wifi.exclamationmark"))
+                .font(.system(size: 12))
+            
             Text(isConnected ? "LIVE" : (isConnecting ? "CONNECTING" : "OFFLINE"))
                 .font(.caption)
                 .fontWeight(.bold)
@@ -23,7 +23,8 @@ struct StatusIndicator: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
-        .background(Color.black.opacity(0.6))
-        .cornerRadius(20)
+        .foregroundStyle(Color.white)
+        .background(isConnected||isConnecting ? Color.solidBlue : Color.gray)
+        .cornerRadius(5)
     }
 }

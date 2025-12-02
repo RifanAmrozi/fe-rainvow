@@ -36,12 +36,21 @@ struct AlertHistoryView: View {
             .padding(.vertical, 4)
             .padding(.bottom, 1)
             .padding(.horizontal, 1)
-            .background(Color.charcoal.opacity(0.1))
+            .background(Color.white)
             .cornerRadius(9)
             .overlay(
                 RoundedRectangle(cornerRadius: 9).stroke(Color.gray, lineWidth: 1)
             )
             .padding()
+            .onAppear {
+                UISegmentedControl.appearance().setTitleTextAttributes([
+                    .foregroundColor: UIColor.black
+                ], for: .normal)
+                UISegmentedControl.appearance().setTitleTextAttributes([
+                    .foregroundColor: UIColor.black
+                ], for: .selected)
+                UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(Color.white)
+            }
             
             // Alert History List
             ScrollView {
@@ -49,7 +58,7 @@ struct AlertHistoryView: View {
                     if selectedTab == "true" {
                         if alertHistoryViewModel.confirmedAlerts.isEmpty {
                             Text("No confirmed alerts")
-                                .foregroundColor(.gray)
+                                .foregroundColor(.darkGray)
                                 .frame(maxWidth: .infinity)
                                 .padding(.top, 100)
                         } else {
@@ -60,7 +69,7 @@ struct AlertHistoryView: View {
                     } else {
                         if alertHistoryViewModel.ignoredAlerts.isEmpty {
                             Text("No ignored alerts")
-                                .foregroundColor(.gray)
+                                .foregroundColor(.darkGray)
                                 .frame(maxWidth: .infinity)
                                 .padding(.top, 100)
                         } else {

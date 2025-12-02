@@ -40,18 +40,18 @@ struct AlertHistoryCard: View {
                 
                 Text(alert.formattedTimestamp)
                     .font(.system(size: 12, weight: .regular))
-                    .foregroundColor(.black.opacity(0.5))
+                    .foregroundColor(.darkGray)
                                      
                 Spacer()
                 
                 if alert.isValid==true {
                     Text("Confirmed by \(alert.updatedBy ?? "Unknown").")
                         .font(.system(size: 12))
-                        .foregroundColor(.black.opacity(0.5))
+                        .foregroundColor(.darkGray)
                 } else if  alert.isValid==false {
                     Text("Ignored by \(alert.updatedBy ?? "Unknown").")
                         .font(.system(size: 12))
-                        .foregroundColor(.black.opacity(0.5))
+                        .foregroundColor(.darkGray)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: 68, alignment: .leading)

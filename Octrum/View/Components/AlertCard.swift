@@ -40,22 +40,22 @@ struct AlertCard: View {
         VStack(alignment: .leading, spacing: 2) {
             HStack {
                 Image(systemName: "exclamationmark.triangle.fill")
-                    .foregroundColor(.red)
+                    .foregroundColor(.flashyRed)
                 
                 Text("ACTIVITY DETECTED!")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.red)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.flashyRed)
             }
             
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
                     Text(alert.cameraName)
-                        .font(.system(size: 32, weight: .bold))
+                        .font(.title)
                         .foregroundColor(.black)
                     
                     Text("•")
                         .font(.system(size: 32, weight: .bold))
-                        .foregroundColor(.gray.opacity(0.5))
+                        .foregroundColor(.darkGray)
                     
                     Text(alert.aisleLoc)
                         .font(.system(size: 32, weight: .regular))
@@ -113,39 +113,40 @@ struct AlertCard: View {
     }
     
     private func dropdownPhoto() -> some View {
-        VStack {
-            HStack {
-                Image(systemName: "photo")
-                    .font(.system(size: 14))
-                    .foregroundColor(.black)
-                Text("Review suspect")
-                    .font(.system(size: 14, weight: .regular))
-                    .foregroundColor(.black)
-                Spacer()
-                Button(action: {
-                    isShowPerson.toggle()
-                }, label: {
+        Button(action: {
+            isShowPerson.toggle()
+        }, label: {
+            VStack {
+                HStack {
+                    Image(systemName: "photo")
+                        .font(.system(size: 14))
+                        .foregroundColor(.black)
+                    Text("Review suspect")
+                        .font(.system(size: 14, weight: .regular))
+                        .foregroundColor(.black)
+                    Spacer()
                     Image(systemName: "chevron.right")
                         .font(.system(size: 14))
                         .foregroundColor(.gray)
                         .rotationEffect(isShowPerson == true ? .degrees(90) : .degrees(0))
-                })
+                }
+                
+                if isShowPerson {
+                    KFImage(URL(string: alert.photoUrl))
+                        .resizable()
+                        .fade(duration: 0.3)
+                        .placeholder {
+                            ProgressView().tint(.white)
+                        }
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .scaledToFit()
+                }
             }
-            
-            if isShowPerson {
-                KFImage(URL(string: alert.photoUrl))
-                    .resizable()
-                    .fade(duration: 0.3)
-                    .placeholder {
-                        ProgressView().tint(.white)
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-            }
-        }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 16)
-        .overlay(RoundedRectangle(cornerRadius: 10)
-            .stroke(Color.gray.opacity(0.3), lineWidth: 1))
+            .padding(.vertical, 8)
+            .padding(.horizontal, 16)
+            .overlay(RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.gray.opacity(0.3), lineWidth: 1))
+        })
     }
     
     private func actionButton() -> some View {
@@ -172,13 +173,13 @@ struct AlertCard: View {
                     Text(currentStatus == false ? "Ignored" : "Ignore")
                         .padding(.vertical, 12)
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(isProcessing || currentStatus == false ? Color.gray : Color.red)
+                        .foregroundColor(isProcessing || currentStatus == false ? Color.gray : Color.flashyRed)
                         .frame(maxWidth: .infinity)
                         .cornerRadius(10)
                         .background(isProcessing || currentStatus == false ? Color.gray.opacity(0.1) : Color.red.opacity(0.05))
                         .background(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(isProcessing || currentStatus == false ? Color.gray : Color.red, lineWidth: 0.8)
+                                .stroke(isProcessing || currentStatus == false ? Color.gray : Color.flashyRed, lineWidth: 0.8)
                         )
                 })
                 .disabled(isProcessing || currentStatus == false)

@@ -13,7 +13,9 @@ public class CameraViewModel: ObservableObject {
     @Published var cameras: [Camera] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
+    @Published var filteredAisleLocation: String? = nil
     
+    private var allCameras: [Camera] = []
     private var cancellables = Set<AnyCancellable>()
     private let cameraService: CameraService
     
@@ -56,7 +58,8 @@ public class CameraViewModel: ObservableObject {
                     print("❌ Error fetching cameras: \(error.localizedDescription)")
                 }
             } receiveValue: { [weak self] cameras in
-                self?.cameras = cameras
+                self?.allCameras = cameras
+                self?.applyFilter()
                 print("✅ Fetched \(cameras.count) cameras")
             }
             .store(in: &cancellables)
@@ -76,11 +79,31 @@ public class CameraViewModel: ObservableObject {
                     completion(false)
                 }
             } receiveValue: { [weak self] newCamera in
-                self?.cameras.append(newCamera)
+                self?.allCameras.append(newCamera)
+                self?.applyFilter()
                 print("✅ Camera added: \(newCamera.name)")
                 completion(true)
             }
             .store(in: &cancellables)
+    }
+    
+    func setFilter(aisleLocation: String?) {
+        filteredAisleLocation = aisleLocation
+        applyFilter()
+        
+        if let location = aisleLocation {
+            print("🔍 Filter applied: \(location) - Showing \(cameras.count) cameras")
+        } else {
+            print("🔍 Filter cleared - Showing all \(cameras.count) cameras")
+        }
+    }
+    
+    private func applyFilter() {
+        if let filterLocation = filteredAisleLocation {
+            cameras = allCameras.filter { $0.aisleLoc == filterLocation }
+        } else {
+            cameras = allCameras
+        }
     }
     
     func fetchCamera(id: String) -> AnyPublisher<Camera, Error> {

@@ -10,6 +10,7 @@ import SwiftUI
 struct MainView: View {
     @EnvironmentObject var session: SessionManager
     @StateObject var alertViewModel = AlertViewModel()
+    @State private var selectedTab: Int = 0
     
     init() {
         let appearance = UITabBarAppearance()
@@ -27,12 +28,13 @@ struct MainView: View {
     
     var body: some View {
         NavigationStack {
-            TabView {
+            TabView(selection: $selectedTab) {
                 CamListView()
                     .tabItem {
                         Image(systemName: "video.fill")
                         Text("CCTV")
                     }
+                    .tag(0)
                 
                 AlertListView()
                     .environmentObject(alertViewModel)
@@ -41,19 +43,36 @@ struct MainView: View {
                         Text("Alerts")
                     }
                     .badge(alertViewModel.totalAlerts)
+                    .tag(1)
                 
                 AlertHistoryView()
                     .tabItem {
                         Image(systemName: "clock.fill")
                         Text("History")
                     }
+                    .tag(2)
             }
-            .tint(.blue)
+            .tint(.solidBlue)
             .onAppear {
                 alertViewModel.fetchAlerts()
+                setupNotificationObserver()
+            }
+            .onDisappear {
+                NotificationCenter.default.removeObserver(self, name: NSNotification.Name("SwitchToAlertsTab"), object: nil)
             }
         }
         .tint(.white)
+    }
+    
+    private func setupNotificationObserver() {
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name("SwitchToAlertsTab"),
+            object: nil,
+            queue: .main
+        ) { _ in
+            selectedTab = 1
+            print("🔔 Switched to Alerts tab from notification tap")
+        }
     }
 }
 

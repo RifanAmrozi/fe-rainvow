@@ -19,6 +19,7 @@ struct AlertDetailView: View {
     @ObservedObject private var stateManager = AlertStateManager.shared
     @Environment(\.dismiss) var dismiss
     @State private var player: AVPlayer?
+    @State private var showFullscreenVideo = false
     
     private var currentStatus: Bool? {
         // Prioritas: state manager (local update) > viewModel.alertDetail?.isValid (dari API)
@@ -74,6 +75,11 @@ struct AlertDetailView: View {
             message: downloadMessage,
             isSuccess: downloadSuccess
         )
+        .fullScreenCover(isPresented: $showFullscreenVideo) {
+            if let alertDetail = viewModel.alertDetail {
+                FullScreenAlertVideoView(videoUrl: alertDetail.videoUrl)
+            }
+        }
     }
     
     private var loadingView: some View {
@@ -111,28 +117,45 @@ struct AlertDetailView: View {
             VStack(alignment: .leading, spacing: 16) {
                 
                 // ----------------- Video Player -----------------
-                if let player = player {
-                    VideoPlayer(player: player)
-                        .aspectRatio(16/9, contentMode: .fit)
-                        .cornerRadius(12)
-                        .padding(.top, 12)
-                        .padding(.horizontal)
-                } else {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.3))
-                        .aspectRatio(16/9, contentMode: .fit)
-                        .cornerRadius(12)
-                        .overlay(
-                            VStack(spacing: 8) {
-                                ProgressView()
-                                Text("Loading video...")
-                                    .font(.system(size: 14))
-                                    .foregroundColor(.gray)
-                            }
-                        )
-                        .padding(.top, 12)
-                        .padding(.horizontal)
+                ZStack(alignment: .topTrailing) {
+                    if let player = player {
+                        VideoPlayer(player: player)
+                            .aspectRatio(16/9, contentMode: .fit)
+                            .cornerRadius(12)
+                    } else {
+                        Rectangle()
+                            .fill(Color.gray.opacity(0.3))
+                            .aspectRatio(16/9, contentMode: .fit)
+                            .cornerRadius(12)
+                            .overlay(
+                                VStack(spacing: 8) {
+                                    ProgressView()
+                                    Text("Loading video...")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(.gray)
+                                }
+                            )
+                    }
+                    
+                    // Fullscreen button overlay
+                    if player != nil && UIDevice.current.userInterfaceIdiom == .phone {
+                        Button(action: {
+                            player?.pause() // Pause current player
+                            showFullscreenVideo = true
+                        }, label: {
+                            Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundColor(.white)
+                                .padding(4)
+                                .background(Color.black.opacity(0.4))
+                                .clipShape(Circle())
+                                .overlay(Circle().stroke(Color.white, lineWidth: 1))
+                        })
+                        .padding(10)
+                    }
                 }
+                .padding(.top, 12)
+                .padding(.horizontal)
                 
                 VStack {
                     HStack {
@@ -152,6 +175,7 @@ struct AlertDetailView: View {
                             ProgressView().tint(.black)
                         }
                         .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .scaledToFit()
                 }
                 .padding(16)
                 .overlay(RoundedRectangle(cornerRadius: 10)
@@ -197,6 +221,7 @@ struct AlertDetailView: View {
                 .padding(16)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(.white)
+                .foregroundColor(.black)
                 .cornerRadius(10)
                 .overlay(RoundedRectangle(cornerRadius: 10)
                     .stroke(Color.gray.opacity(0.3), lineWidth: 1))
@@ -214,6 +239,7 @@ struct AlertDetailView: View {
                     .padding(16)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(Color.bluishGray)
+                    .foregroundColor(.black)
                     .cornerRadius(10)
                     .overlay(RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.gray.opacity(0.3), lineWidth: 1))
@@ -266,13 +292,13 @@ struct AlertDetailView: View {
                 }, label: {
                     Text(currentStatus == false ? "Ignored" : "Ignore")
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(viewModel.isProcessing || currentStatus == false ? Color.gray : .red)
+                        .foregroundColor(viewModel.isProcessing || currentStatus == false ? Color.gray : Color.flashyRed)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
                         .background(viewModel.isProcessing || currentStatus == false ? Color.gray.opacity(0.1) : Color.red.opacity(0.05))
                         .background(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(viewModel.isProcessing || currentStatus == false ? Color.gray : Color.red, lineWidth: 0.8)
+                                .stroke(viewModel.isProcessing || currentStatus == false ? Color.gray : Color.flashyRed, lineWidth: 0.8)
                         )
                 })
                 .disabled(viewModel.isProcessing || currentStatus == false)

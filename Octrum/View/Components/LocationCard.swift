@@ -12,20 +12,23 @@ struct LocationCard: View {
     
     var body: some View {
         HStack {
+            Image("StoreIcon")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 25, height: 25)
+            
             VStack(alignment: .leading, spacing: 2) {
                 Text(store?.storeName ?? "")
                     .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.black)
                     .lineLimit(1)
                 Text(store?.storeAddress ?? "")
                     .font(.system(size: 12, weight: .regular))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.darkGray)
                     .lineLimit(1)
             }
             
             Spacer()
-            
-            Image(systemName: "chevron.right.circle")
-                .foregroundColor(Color.blue)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)

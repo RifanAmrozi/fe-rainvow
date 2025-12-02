@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		565080E72ECECDBC00070EE3 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 565080E62ECECDBC00070EE3 /* Kingfisher */; };
 		565499922EA2334000B68E86 /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 565499912EA2334000B68E86 /* WebRTC */; };
-		568EE4362EB83E9A00F53EC6 /* alert.wav in Resources */ = {isa = PBXBuildFile; fileRef = 568EE4352EB83E9900F53EC6 /* alert.wav */; };
+		56EF27FF2ED3F72800D13E44 /* alert.wav in Resources */ = {isa = PBXBuildFile; fileRef = 56EF27FE2ED3F72800D13E44 /* alert.wav */; };
 		56FBA3A82ECC46E0004FD7BA /* OctrumNotificationService.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 56FBA39A2ECC3C91004FD7BA /* OctrumNotificationService.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -59,12 +59,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		568EE4352EB83E9900F53EC6 /* alert.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = alert.wav; sourceTree = "<group>"; };
 		56B0E8B02EA22B8500DE40E7 /* Octrum.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Octrum.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		56B0E8BD2EA22B8600DE40E7 /* OctrumTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OctrumTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		56B0EA672EA22CA800DE40E7 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = .swiftlint.yml; sourceTree = "<group>"; };
 		56B0EA692EA22CC200DE40E7 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		56B0EA6B2EA22CCF00DE40E7 /* .gitattributes */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = .gitattributes; sourceTree = "<group>"; };
+		56EF27FE2ED3F72800D13E44 /* alert.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = alert.wav; sourceTree = "<group>"; };
 		56FBA39A2ECC3C91004FD7BA /* OctrumNotificationService.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OctrumNotificationService.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -152,7 +152,7 @@
 				56B0E8C02EA22B8600DE40E7 /* OctrumTests */,
 				56FBA39B2ECC3C91004FD7BA /* OctrumNotificationService */,
 				56B0E8B12EA22B8500DE40E7 /* Products */,
-				568EE4352EB83E9900F53EC6 /* alert.wav */,
+				56EF27FE2ED3F72800D13E44 /* alert.wav */,
 				56FBA3A72ECC46E0004FD7BA /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -305,7 +305,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				568EE4362EB83E9A00F53EC6 /* alert.wav in Resources */,
+				56EF27FF2ED3F72800D13E44 /* alert.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -532,11 +532,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Octrum/Info.plist;
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app needs access to local network to connect to the server";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to save alert videos to your Photos library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -546,6 +548,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = AppleDA.Octrum;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -569,11 +574,13 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Octrum/Info.plist;
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "This app needs access to local network to connect to the server";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to save alert videos to your Photos library";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -583,6 +590,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = AppleDA.Octrum;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;

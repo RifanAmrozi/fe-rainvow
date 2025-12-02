@@ -71,11 +71,11 @@ struct AddCamView: View {
                 if !rtspUrl.isEmpty && !isValidRtspUrl {
                     Text("Invalid RTSP URL format. Must start with rtsp:// or rtsps://")
                         .font(.system(size: 12))
-                        .foregroundColor(.red)
+                        .foregroundColor(.flashyRed)
                         .padding(.top, 4)
                 }
                 
-                Spacer().frame(height: 32)
+                Spacer()
                 
                 Button(action: {
                     saveCamera()
@@ -95,9 +95,9 @@ struct AddCamView: View {
                     .foregroundColor(.white)
                     .cornerRadius(10)
                 })
+                .padding(.bottom, 12)
                 .disabled(isLoading || name.isEmpty || aisleLoc.isEmpty || rtspUrl.isEmpty || !isValidRtspUrl)
                 
-                Spacer()
             }
             .padding(.top, 16)
             .padding(.horizontal, 16)
@@ -106,7 +106,8 @@ struct AddCamView: View {
             .toolbarBackground(Color.white, for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
             .toolbarColorScheme(.light, for: .navigationBar)
-            .tint(.blue)
+            .tint(.solidBlue)
+            .background(.white)
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)

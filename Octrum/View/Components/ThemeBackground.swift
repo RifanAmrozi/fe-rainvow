@@ -9,7 +9,7 @@ import SwiftUI
 
 func themeBackground() -> LinearGradient {
     return LinearGradient(
-        gradient: Gradient(colors: [.white, .white, .gray.opacity(0.2)]),
+        gradient: Gradient(colors: [.white, .white, Color.gradientGray]),
         startPoint: .top,
         endPoint: .bottom
     )

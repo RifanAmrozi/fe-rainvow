@@ -12,17 +12,20 @@ struct CamListView: View {
     @ObservedObject private var userViewModel = UserViewModel.shared
     
     @State private var isAddingCamera = false
+    @State private var isShowingFilter = false
+    
     @State private var showAlert = false
     @State private var alertMessage = ""
     @State private var isAlertSuccess = false
     
-    let columns = [
-        GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16)
-    ]
+    // Dynamic columns based on device type
+    var columns: [GridItem] {
+        let columnCount = UIDevice.current.userInterfaceIdiom == .pad ? 3 : 2
+        return Array(repeating: GridItem(.flexible(), spacing: 16), count: columnCount)
+    }
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack(alignment: .top) {
                 GeometryReader { geo in
                     Color.charcoal
@@ -38,41 +41,55 @@ struct CamListView: View {
                     LocationCard(store: userViewModel.store)
                     
                     // ----------------- Camera List -----------------
-                    ScrollView {
-                        HStack {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 6) {
                             Text("Integrated CCTV: \(viewModel.totalCameras)")
                                 .font(.system(size: 14, weight: .semibold))
+                                .foregroundColor(.black)
                                 .lineLimit(1)
                             
-                            Spacer()
-                            
-                            Button(action: {
-                                isAddingCamera = true
-                            }, label: {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "plus")
-                                        .font(.system(size: 12, weight: .semibold))
-                                    Text("Add CCTV")
-                                        .font(.system(size: 12, weight: .semibold))
-                                }
-                                .foregroundColor(.white)
-                                .padding(.vertical, 8)
-                                .padding(.horizontal, 18)
-                                .background(Color.charcoal)
-                                .cornerRadius(5)
-                            })
+                            let filterLocation = viewModel.filteredAisleLocation ?? "All Locations"
+                            HStack(spacing: 4) {
+                                Text(filterLocation)
+                                    .font(.system(size: 11, weight: .medium))
+                            }
+                            .foregroundColor(.white)
+                            .padding(.vertical, 4)
+                            .padding(.horizontal, 8)
+                            .background(Color.solidBlue)
+                            .cornerRadius(12)
                         }
-                        .padding(.horizontal)
-                        .padding(.top)
                         
+                        Spacer()
+                        
+                        Button(action: {
+                            isAddingCamera = true
+                        }, label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "plus")
+                                    .font(.system(size: 12, weight: .semibold))
+                                Text("Add CCTV")
+                                    .font(.system(size: 12, weight: .semibold))
+                            }
+                            .foregroundColor(.white)
+                            .padding(.vertical, 12)
+                            .padding(.horizontal, 18)
+                            .background(Color.charcoal)
+                            .cornerRadius(5)
+                        })
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 12)
+                    
+                    ScrollView {
                         if viewModel.cameras.isEmpty {
                             DisclaimerCard(
                                 title: viewModel.emptyStateTitle,
                                 message: viewModel.emptyStateMessage
                             )
                             .padding(.horizontal)
-                            .padding(.vertical, 8)
-                            
+                            .padding(.top, 1)
+                            .padding(.bottom, 8)
                         } else {
                             LazyVGrid(columns: columns, spacing: 16) {
                                 ForEach(viewModel.cameras) { camera in
@@ -85,7 +102,7 @@ struct CamListView: View {
                                                 .clipShape(RoundedRectangle(cornerRadius: 10))
                                                 .overlay(
                                                     LinearGradient(
-                                                        gradient: Gradient(colors: [Color.black.opacity(0.6), Color.black.opacity(0)]),
+                                                        gradient: Gradient(colors: [Color.black.opacity(1), Color.black.opacity(0.7),Color.black.opacity(0.1)]),
                                                         startPoint: .bottom,
                                                         endPoint: .top
                                                     )
@@ -112,7 +129,8 @@ struct CamListView: View {
                                 }
                             }
                             .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
+                            .padding(.top, 1)
+                            .padding(.bottom, 8)
                         }
                     }
                     .refreshable {
@@ -127,6 +145,11 @@ struct CamListView: View {
                         showAlert = true
                     }
                     .environmentObject(viewModel)
+                }
+                .sheet(isPresented: $isShowingFilter) {
+                    FilterCamView(currentFilter: viewModel.filteredAisleLocation) { selectedLocation in
+                        viewModel.setFilter(aisleLocation: selectedLocation)
+                    }
                 }
             }
         }
@@ -168,18 +191,24 @@ struct CamListView: View {
                     .font(.system(size: 12, weight: .regular))
                     .padding(.vertical, 4)
                     .padding(.horizontal, 6)
-                    .background(Color.blue.opacity(0.5))
+                    .background(Color.solidBlue.opacity(0.5))
                     .cornerRadius(4)
                     .overlay(
                         RoundedRectangle(cornerRadius: 4)
-                            .stroke(Color.blue, lineWidth: 1)
+                            .stroke(Color.solidBlue, lineWidth: 1)
                     )
             }
             
             Spacer()
             
-            Image(systemName: "line.3.horizontal.decrease")
-                .font(.title2)
+            Button(action: {
+                isShowingFilter = true
+            }, label: {
+                Image("FilterIcon")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 25, height: 25)
+            })
         }
         .padding(.horizontal, 16)
         .padding(.top, 8)
